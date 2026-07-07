@@ -62,9 +62,10 @@ class ForgotPasswordController extends Controller
                 Notification::route('mail', $user->email)->notify(new SendPasswordChangeConfirmation($otp, $user->email, $user->name, $organizationName, $logoData, $organizationFactoryName));
                 return response()->json(['message' => 'OTP has been sent to your email.'], 201);
             }
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to send OTP. Please try again later.'], 500);
-        }
+            } catch (\Exception $e) {
+                \Log::error('OTP send failed: ' . $e->getMessage());
+                return response()->json(['error' => 'Failed to send OTP. Please try again later.'], 500);
+            }
     }
 
     public function otpVerifyFunction(Request $request)

@@ -23,7 +23,6 @@ class User extends Authenticatable
         'emailVerifiedAt',
         'otp',
         'userType',
-        'employeeId',
         'gender',
         'department',
         'jobPosition',
@@ -58,10 +57,5 @@ class User extends Authenticatable
     public function comPermission()
     {
         return $this->hasOne(ComPermission::class, 'userType', 'userType');
-    }
-
-    public function employee()
-    {
-        return $this->belongsTo(Employee::class, 'employeeId');
     }
 }

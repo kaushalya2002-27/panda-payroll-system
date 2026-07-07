@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Storage;
+
 class ProfileImageService
 {
     /**
-     * Get image URL (dummy implementation to satisfy missing dependency)
+     * Get image URL. $path is the relative path within the "public" disk
+     * (storage/app/public), as stored by uploadImageToGCS().
      *
      * @param string|null $path
      * @return array|null
@@ -17,17 +20,24 @@ class ProfileImageService
         }
 
         return [
-            'signedUrl' => url('storage/' . $path)
+            'signedUrl' => Storage::disk('public')->url($path),
+            'fileName'  => basename($path),
         ];
     }
-    
+
     public function uploadImageToGCS($file)
     {
-        return ['gsutil_uri' => 'dummy_uri'];
+        $path = $file->store('profile-images', 'public');
+
+        return ['gsutil_uri' => $path];
     }
-    
+
     public function deleteImageFromGCS($uri)
     {
-        return true;
+        if (empty($uri)) {
+            return true;
+        }
+
+        return Storage::disk('public')->delete($uri);
     }
 }

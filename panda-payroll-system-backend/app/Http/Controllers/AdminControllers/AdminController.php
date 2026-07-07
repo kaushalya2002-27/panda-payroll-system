@@ -128,9 +128,6 @@ class AdminController extends Controller
                 'department'    => 'nullable|string',
                 'assigneeLevel' => 'required|string',
                 'jobPosition'   => 'nullable|string',
-                // employeeId is optional — Admin/Manager/CEO accounts
-                // won't have one linked, only normal staff accounts will.
-                'employeeId'    => 'nullable|numeric',
             ]);
         }
 
@@ -140,7 +137,6 @@ class AdminController extends Controller
         $user->department    = $request->input('department', $user->department);
         $user->assigneeLevel = $request->input('assigneeLevel', $user->assigneeLevel);
         $user->jobPosition   = $request->input('jobPosition', $user->jobPosition);
-        $user->employeeId    = $request->input('employeeId', $user->employeeId);
         $user->availability  = $request->input('availability', $user->availability);
 
         $user->save();
@@ -225,4 +221,21 @@ class AdminController extends Controller
         ], 200);
     }
 
+    /**
+     * Delete a user account.
+     */
+    public function destroy(string $id)
+    {
+        $user = $this->userInterface->findById($id);
+
+        if (! $user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
+        $user->delete();
+
+        return response()->json([
+            'message' => 'User deleted successfully.',
+        ], 200);
+    }
 }

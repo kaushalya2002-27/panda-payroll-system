@@ -22,7 +22,7 @@ class ProfileUpdateRequest extends FormRequest
             'gender'         => 'nullable|string',
             'removeDoc'      => 'nullable|array',
             'profileImage'   => 'nullable|array',
-            'profileImage.*' => 'file|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'profileImage.*' => 'file|mimes:jpeg,png,jpg,gif,svg|max:8192',
         ];
     }
 

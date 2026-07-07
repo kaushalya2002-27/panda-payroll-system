@@ -58,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('users/{id}/update', [AdminController::class, 'update']);
     Route::get('users-assignee-level', [AdminController::class, 'assigneeLevel']);
     Route::post('users/{id}/give-access', [AdminController::class, 'giveAccess']);
+    Route::delete('users/{id}/delete', [AdminController::class, 'destroy']);
     Route::get('all-users', [UserController::class, 'index']);
     Route::get('users/search', [UserController::class, 'search']);
 

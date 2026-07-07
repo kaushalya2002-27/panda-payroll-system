@@ -190,6 +190,13 @@ class UserController extends Controller
         }
 
         if ($request->hasFile('profileImage')) {
+            // A profile picture is a single current image, not a gallery —
+            // uploading a new one replaces (and cleans up) whatever was there before.
+            foreach ($existingImages as $oldImage) {
+                $this->profileImageService->deleteImageFromGCS($oldImage);
+            }
+            $existingImages = [];
+
             foreach ($request->file('profileImage') as $file) {
                 $uploadResult = $this->profileImageService->uploadImageToGCS($file);
                 if ($uploadResult && isset($uploadResult['gsutil_uri'])) {
