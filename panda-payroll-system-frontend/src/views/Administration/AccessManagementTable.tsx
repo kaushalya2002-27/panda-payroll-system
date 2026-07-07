@@ -8,7 +8,6 @@ import Paper from "@mui/material/Paper";
 import {
   Alert,
   Box,
-  Button,
   LinearProgress,
   Stack,
   Theme,
@@ -25,12 +24,10 @@ import ViewDataDrawer, { DrawerHeader } from "../../components/ViewDataDrawer";
 import AccessManagementDrawerContent from "./AccessManagementDrawerContent";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import { useSnackbar } from "notistack";
-import AddIcon from "@mui/icons-material/Add";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import AddOrEditAccessRoleDialog from "./AddOrEditAccessRoleDialog";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
-  createAccessRole,
   deleteAccessRole,
   getAccessRolesList,
   updateAccessRole,
@@ -64,29 +61,11 @@ function AccessManagementTable() {
     queryFn: getAccessRolesList,
   });
 
-  const { mutate: createAccessRoleMutation } = useMutation({
-    mutationFn: createAccessRole,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["access-roles"] });
-      enqueueSnackbar("Access Role Created Successfully!", {
-        variant: "success",
-      });
-      setSelectedRole(null);
-      setOpenAccessManagementViewDrawer(false);
-      setAddOrEditAccessRoleDialogOpen(false);
-    },
-    onError: () => {
-      enqueueSnackbar(`Access Role Creation Failed`, {
-        variant: "error",
-      });
-    },
-  });
-
   const { mutate: updateAccessRoleMutation } = useMutation({
     mutationFn: updateAccessRole,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["access-roles"] });
-      enqueueSnackbar("Accident Report Updated Successfully!", {
+      enqueueSnackbar("Access Role Updated Successfully!", {
         variant: "success",
       });
       setSelectedRole(null);
@@ -148,37 +127,11 @@ function AccessManagementTable() {
             backgroundColor: isDarkMode ? "#1c2541" : "background.paper", 
           }}
         >
-          <Box
-            sx={{
-              padding: theme.spacing(2),
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Button
-              variant="contained"
-              sx={{ 
-                backgroundColor: isDarkMode ? "#90caf9" : "var(--pallet-blue)", 
-                color: isDarkMode ? "#0b1329" : "#ffffff",
-                fontWeight: isDarkMode ? "bold" : "normal",
-                "&:hover": {
-                  backgroundColor: isDarkMode ? "#64b5f6" : "var(--pallet-blue)",
-                }
-              }}
-              startIcon={<AddIcon />}
-              onClick={() => {
-                setSelectedRole(null);
-                setAddOrEditAccessRoleDialogOpen(true);
-              }}
-              disabled={
-                !useCurrentUserHaveAccess(
-                  PermissionKeys.ADMIN_ACCESS_MNG_CREATE
-                )
-              }
-            >
-              Create New Role
-            </Button>
-          </Box>
+          {/* "Create New Role" button removed — the per-user "Give Access"
+              flow on the Users page already creates an individual role for
+              each user automatically, so a generic "create a role from
+              scratch" button isn't needed here. Existing roles can still
+              be viewed and edited below. */}
           {isFetchingRoles && <LinearProgress sx={{ width: "100%" }} />}
           <Table aria-label="simple table">
             <TableHead 
@@ -276,17 +229,14 @@ function AccessManagementTable() {
         }
       />
 
-      {/* Add/Edit Dialog */}
-      {addOrEditAccessRoleDialogOpen && (
+      {/* Edit Dialog (only reachable via "Edit" on an existing role now,
+          since the standalone "Create New Role" entry point was removed) */}
+      {addOrEditAccessRoleDialogOpen && selectedRole && (
         <AddOrEditAccessRoleDialog
           open={addOrEditAccessRoleDialogOpen}
           handleClose={() => setAddOrEditAccessRoleDialogOpen(false)}
           onSubmit={(data) => {
-            if (selectedRole) {
-              updateAccessRoleMutation(data);
-            } else {
-              createAccessRoleMutation(data);
-            }
+            updateAccessRoleMutation(data);
           }}
           defaultValues={selectedRole}
         />

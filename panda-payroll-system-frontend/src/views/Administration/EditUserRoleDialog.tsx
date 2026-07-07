@@ -19,7 +19,6 @@ import { useEffect } from "react";
 import CustomButton from "../../components/CustomButton";
 import {
   fetchAllAssigneeLevel,
-  fetchAllEmployees,
   User,
   UserLevel,
 } from "../../api/userApi";
@@ -39,7 +38,6 @@ type DialogProps = {
     department: string;
     availability: boolean;
     jobPosition: string;
-    employeeId: number | null;
   }) => void;
   isSubmitting?: boolean;
 };
@@ -60,13 +58,6 @@ export default function EditUserRoleDialog({
     queryFn: fetchAllAssigneeLevel,
   });
 
-  // Employees from the Payroll System — used to link this login account
-  // to a specific employee record (for data scoping later on)
-  const { data: employees } = useQuery({
-    queryKey: ["employees"],
-    queryFn: fetchAllEmployees,
-  });
-
   // Departments come from the Payroll System's "Departments & Positions" data
   const { data: departmentData } = useQuery({
     queryKey: ["departments"],
@@ -79,25 +70,19 @@ export default function EditUserRoleDialog({
     queryFn: fetchJobPositionData,
   });
 
-  // NOTE: using `any` here on purpose. The API's User.employeeId is a plain
-  // number, but while editing in this form we temporarily hold the full
-  // Employee object (so the Autocomplete can display the name) — we only
-  // convert it back to a number when submitting. Typing the form strictly
-  // as `User` would conflict with that, so we relax it here.
   const {
     handleSubmit,
     control,
     formState: { errors },
     reset,
     watch,
-  } = useForm<any>({
+  } = useForm<User>({
     defaultValues: {
       name: defaultValues?.name ?? "",
       userLevel: defaultValues?.userLevel,
       department: defaultValues?.department ?? "",
       jobPosition: defaultValues?.jobPosition ?? "",
       availability: defaultValues?.availability ?? false,
-      employeeId: null,
     },
   });
 
@@ -319,46 +304,6 @@ export default function EditUserRoleDialog({
                   )}
                 />
               </Box>
-
-              {/* Link this login account to a specific Payroll Employee record.
-                  Used later to restrict payroll data (payslips, timecards, etc.)
-                  to just this user's own record — unless their User Level is
-                  Admin/Manager/CEO, in which case they see everything.
-                  Leave empty for Admin/Manager/CEO accounts. */}
-              <Box sx={{ flex: 1 }}>
-                <Controller
-                  name="employeeId"
-                  control={control}
-                  defaultValue={null}
-                  render={({ field }) => (
-                    <Autocomplete
-                      {...field}
-                      onChange={(_, data) => field.onChange(data)}
-                      getOptionLabel={(option: any) =>
-                        option ? `${option.full_name} (${option.emp_code})` : ""
-                      }
-                      isOptionEqualToValue={(option: any, value: any) =>
-                        option?.id === value?.id
-                      }
-                      size="small"
-                      options={employees || []}
-                      sx={fieldSx}
-                      renderOption={(props, option: any) => (
-                        <li {...props} key={option.id}>
-                          {option.full_name} ({option.emp_code})
-                        </li>
-                      )}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Link to Employee (optional — leave empty for Admin/Manager)"
-                          name="employeeId"
-                        />
-                      )}
-                    />
-                  )}
-                />
-              </Box>
             </>
           ) : null}
         </Stack>
@@ -382,7 +327,7 @@ export default function EditUserRoleDialog({
           }}
           disabled={isSubmitting}
           size="medium"
-          onClick={handleSubmit((data: any) => {
+          onClick={handleSubmit((data) => {
             onSubmit({
               id: defaultValues?.id,
               name: data.name,
@@ -390,7 +335,6 @@ export default function EditUserRoleDialog({
               department: data.department,
               availability: data.availability,
               jobPosition: data.jobPosition,
-              employeeId: data.employeeId?.id ?? null,
             });
           })}
         >

@@ -85,7 +85,7 @@ function ForgotPasswordDialog({ open, handleClose }: { open: boolean; handleClos
     } else if (showOTPField) {
       otpVerificationMutation({ email: data.email, otp: data.otp });
     } else if (showPasswordFields) {
-      resetPasswordMutation({ email: data.email, password: data.password });
+      resetPasswordMutation({ email: data.email, password: data.password, otp: data.otp! });
     }
   };
 

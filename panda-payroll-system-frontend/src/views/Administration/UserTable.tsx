@@ -25,7 +25,7 @@ import { useEffect, useMemo, useState } from "react";
 import ViewDataDrawer, { DrawerHeader } from "../../components/ViewDataDrawer";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import { useSnackbar } from "notistack";
-import { fetchAllUsers, giveUserAccess, updateUserType, User } from "../../api/userApi";
+import { deleteUser, fetchAllUsers, giveUserAccess, updateUserType, User } from "../../api/userApi";
 import ViewUserContent from "./ViewUserContent";
 import EditUserRoleDialog from "./EditUserRoleDialog";
 import { PermissionKeys } from "./SectionList";
@@ -153,6 +153,19 @@ function UserTable() {
     },
     onError: () => {
       enqueueSnackbar(`Failed to give access`, {
+        variant: "error",
+      });
+    },
+  });
+
+  // Mutation: permanently delete a user account
+  const { mutateAsync: deleteUserMutation } = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: () => {
+      enqueueSnackbar(`Failed to delete user`, {
         variant: "error",
       });
     },
@@ -481,10 +494,12 @@ function UserTable() {
             </>
           }
           handleClose={() => setDeleteDialogOpen(false)}
-          // TODO: Backend delete endpoint is not implemented yet.
-          // Once available, call it here using rowToDelete.id
-          deleteFunc={async () => {}}
+          deleteFunc={async () => {
+            await deleteUserMutation(rowToDelete.id);
+          }}
           onSuccess={() => {
+            setOpenViewDrawer(false);
+            setSelectedRow(null);
             setRowToDelete(null);
             setDeleteDialogOpen(false);
             enqueueSnackbar("User Deleted Successfully!", {

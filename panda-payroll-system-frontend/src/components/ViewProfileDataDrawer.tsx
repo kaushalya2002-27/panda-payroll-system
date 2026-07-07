@@ -23,6 +23,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import VpnKeyOutlinedIcon from "@mui/icons-material/VpnKeyOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { enqueueSnackbar } from "notistack";
+import queryClient from "../state/queryClient";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import { useNavigate } from "react-router";
 
@@ -203,6 +204,7 @@ export function DrawerUpdateButtons({
           handleClose={() => setLogoutDialogOpen(false)}
           deleteFunc={async () => {
             localStorage.removeItem("token");
+            queryClient.clear();
             navigate("/");
           }}
           onSuccess={() => {

@@ -58,7 +58,6 @@ export const userSchema = z.object({
   employeeNumber: z.string(),
   jobPosition: z.string(),
   assigneeLevel: z.string(),
-  employeeId: z.number().nullable().optional(),
   permissionObject: PermissionKeysObjectSchema,
 });
 
@@ -147,6 +146,12 @@ export async function giveUserAccess(userId: number) {
   return res.data;
 }
 
+// Permanently deletes a user account.
+export async function deleteUser(userId: number) {
+  const res = await axios.delete(`/api/users/${userId}/delete`);
+  return res.data;
+}
+
 export async function forgotPassword({ email }: { email: string }) {
   const res = await axios.post("/api/forgot-password", {
     email,
@@ -171,13 +176,16 @@ export async function otpVerification({
 export async function resetPassword({
   email,
   password,
+  otp,
 }: {
   email: string;
   password: string;
+  otp: string;
 }) {
   const res = await axios.post("/api/change-password", {
     email,
     password,
+    otp,
   });
   return res.data;
 }
@@ -187,13 +195,6 @@ export async function fetchAllAssigneeLevel() {
   return res.data.assigneeLevels;
 }
 
-// Fetch all employees from the Payroll System, used to link a user
-// account to a specific employee record (for data scoping later)
-export async function fetchAllEmployees() {
-  const res = await axios.get("/api/payroll/employees");
-  return res.data;
-}
-
 export async function updateUserType({
   id,
   name,
@@ -201,7 +202,6 @@ export async function updateUserType({
   department,
   availability,
   jobPosition,
-  employeeId,
 }: {
   id: number;
   name: string;
@@ -209,7 +209,6 @@ export async function updateUserType({
   department: string;
   availability: boolean;
   jobPosition: string;
-  employeeId: number | null;
 }) {
   const res = await axios.post(`/api/users/${id}/update`, {
     name,
@@ -217,7 +216,6 @@ export async function updateUserType({
     department,
     availability,
     jobPosition,
-    employeeId,
   });
 
   return res.data;
@@ -254,16 +252,10 @@ export async function fetchExternalAuditAssignee() {
   return res.data;
 }
 
-export async function updateUserProfileImage({
-  id,
-  imageFile,
-}: {
-  id: number;
-  imageFile: File;
-}) {
+export async function updateUserProfileImage({ id, imageFile }: { id: number; imageFile: File }) {
   const formData = new FormData();
-  formData.append("profileImage[0]", imageFile); // Backend expects an array
-
+  formData.append("profileImage[]", imageFile); 
+  
   const res = await axios.post(`/api/user/${id}/profile-update`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -272,7 +264,6 @@ export async function updateUserProfileImage({
 
   return res.data;
 }
-
 export async function updateUserProfileDetails({
   id,
   name,

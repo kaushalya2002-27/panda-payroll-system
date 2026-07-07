@@ -55,8 +55,12 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
       queryClient.invalidateQueries({ queryKey: ["current-user"] });
       enqueueSnackbar("Profile updated successfully!", { variant: "success" });
     },
-    onError: () => {
-      enqueueSnackbar("Profile update failed", { variant: "error" });
+    onError: (error: any) => {
+      const message =
+        error?.data?.message ||
+        error?.response?.data?.message ||
+        "Profile update failed";
+      enqueueSnackbar(message, { variant: "error" });
     },
   });
 

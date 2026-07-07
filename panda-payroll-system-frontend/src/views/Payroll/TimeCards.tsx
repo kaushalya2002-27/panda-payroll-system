@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   Box, Typography, Grid, Paper, TextField, MenuItem, Button,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Select, InputBase,
+  Select,
 } from "@mui/material";
 import axios from "axios";
 import { useTheme } from "@mui/material/styles"; 
@@ -325,19 +325,22 @@ export default function TimeCards() {
     }
   };
 
-  const tableInputStyles = (disabled: boolean) => ({
+  const tableInputStyles = (disabled: boolean): React.CSSProperties => ({
     border: isDarkMode ? "1px solid #2e3b63" : "1px solid #b0bec5",
-    borderRadius: 1,
-    px: 0.5,
+    borderRadius: 4,
+    padding: "0 4px",
     fontSize: "0.85rem",
     fontWeight: 600,
     width: "100%",
     height: 32,
-    color: isDarkMode ? "#cbd5e1" : "text.primary",
-    bgcolor: disabled 
-      ? (isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.04)") 
+    boxSizing: "border-box",
+    color: isDarkMode ? "#cbd5e1" : theme.palette.text.primary,
+    backgroundColor: disabled
+      ? (isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.04)")
       : (isDarkMode ? "#131a30" : "transparent"),
-    input: { textAlign: "center" }
+    textAlign: "center",
+    outline: "none",
+    fontFamily: "inherit",
   });
 
   return (
@@ -526,40 +529,54 @@ export default function TimeCards() {
                   <TableCell sx={{ fontSize: "0.8rem", fontWeight: 500, whiteSpace: "nowrap", color: isDarkMode ? "#cbd5e1" : "text.primary" }}>{row.date}</TableCell>
                   <TableCell sx={{ fontSize: "0.8rem", color: isDarkMode ? "#94a3b8" : "text.secondary" }}>{row.day}</TableCell>
                   <TableCell>
-                    <Select size="small" value={row.status} onChange={(e) => handleRowChange(idx, "status", e.target.value)}
-                      sx={{ fontSize: "0.85rem", height: 32, width: 90, bgcolor: isDarkMode ? "#131a30" : "#fff", color: isDarkMode ? "#cbd5e1" : "text.primary", fontWeight: 500, "& .MuiOutlinedInput-notchedOutline": { borderColor: isDarkMode ? "#2e3b63" : "#cbd5e1" } }}>
-                      <MenuItem value="work">Work</MenuItem>
-                      <MenuItem value="holiday">Holiday</MenuItem>
-                      <MenuItem value="leave">Leave</MenuItem>
-                    </Select>
+                    <select
+                      value={row.status}
+                      onChange={(e) => handleRowChange(idx, "status", e.target.value)}
+                      style={{
+                        fontSize: "0.85rem",
+                        height: 32,
+                        width: 90,
+                        backgroundColor: isDarkMode ? "#131a30" : "#fff",
+                        color: isDarkMode ? "#cbd5e1" : theme.palette.text.primary,
+                        fontWeight: 500,
+                        border: isDarkMode ? "1px solid #2e3b63" : "1px solid #cbd5e1",
+                        borderRadius: 4,
+                        padding: "0 4px",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      <option value="work">Work</option>
+                      <option value="holiday">Holiday</option>
+                      <option value="leave">Leave</option>
+                    </select>
                   </TableCell>
                   <TableCell align="center">
                     <Box sx={{ display: "flex", gap: 0.5, justifyContent: "center", alignItems: "center" }}>
-                      <InputBase value={row.start_time || ""} disabled={row.status !== "work"}
+                      <input value={row.start_time || ""} disabled={row.status !== "work"}
                         onChange={(e) => handleRowChange(idx, "start_time", e.target.value)}
-                        sx={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #b0bec5", borderRadius: 1, px: 0.5, fontSize: "0.8rem", fontWeight: 600, width: 55, height: 32, bgcolor: inputBg, color: isDarkMode ? "#cbd5e1" : "text.primary", input: { textAlign: "center" } }} />
+                        style={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #b0bec5", borderRadius: 4, padding: "0 4px", fontSize: "0.8rem", fontWeight: 600, width: 55, height: 32, boxSizing: "border-box", backgroundColor: inputBg, color: isDarkMode ? "#cbd5e1" : theme.palette.text.primary, textAlign: "center", outline: "none", fontFamily: "inherit" }} />
                       <Typography variant="caption" sx={{ fontWeight: 600, color: "text.secondary" }}>-</Typography>
-                      <InputBase value={row.end_time || ""} disabled={row.status !== "work"}
+                      <input value={row.end_time || ""} disabled={row.status !== "work"}
                         onChange={(e) => handleRowChange(idx, "end_time", e.target.value)}
-                        sx={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #b0bec5", borderRadius: 1, px: 0.5, fontSize: "0.8rem", fontWeight: 600, width: 55, height: 32, bgcolor: inputBg, color: isDarkMode ? "#cbd5e1" : "text.primary", input: { textAlign: "center" } }} />
+                        style={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #b0bec5", borderRadius: 4, padding: "0 4px", fontSize: "0.8rem", fontWeight: 600, width: 55, height: 32, boxSizing: "border-box", backgroundColor: inputBg, color: isDarkMode ? "#cbd5e1" : theme.palette.text.primary, textAlign: "center", outline: "none", fontFamily: "inherit" }} />
                     </Box>
                   </TableCell>
                   <TableCell align="center">
-                    <InputBase 
-                      value={row.hours || ""} 
-                      disabled={isLeave} 
+                    <input
+                      value={row.hours || ""}
+                      disabled={isLeave}
                       onChange={(e) => handleRowChange(idx, "hours", e.target.value)}
-                      sx={tableInputStyles(isLeave)} 
+                      style={tableInputStyles(isLeave)}
                     />
                   </TableCell>
                   {products.map(prod => (
                     <TableCell key={prod.id} align="center">
-                      <InputBase 
+                      <input
                         value={row.product_quantities[prod.id] === 0 ? "" : row.product_quantities[prod.id] || ""}
                         placeholder="0"
-                        disabled={isLeave} 
+                        disabled={isLeave}
                         onChange={(e) => handleQtyChange(idx, prod.id, e.target.value)}
-                        sx={tableInputStyles(isLeave)} 
+                        style={tableInputStyles(isLeave)}
                       />
                     </TableCell>
                   ))}
@@ -568,11 +585,11 @@ export default function TimeCards() {
                   </TableCell>
                   {(["ot_hours", "day_duty", "travelling", "other_allowance"] as const).map(field => (
                     <TableCell key={field} align="center">
-                      <InputBase 
-                        value={row[field] || ""} 
+                      <input
+                        value={row[field] || ""}
                         disabled={isLeave}
                         onChange={(e) => handleRowChange(idx, field, e.target.value)}
-                        sx={tableInputStyles(isLeave)} 
+                        style={tableInputStyles(isLeave)}
                       />
                     </TableCell>
                   ))}
@@ -580,8 +597,8 @@ export default function TimeCards() {
                     {displayGross}
                   </TableCell>
                   <TableCell align="center">
-                    <InputBase value={row.notes || ""} placeholder="Add notes..." onChange={(e) => handleRowChange(idx, "notes", e.target.value)}
-                      sx={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #b0bec5", borderRadius: 1, px: 1, fontSize: "0.8rem", width: "100%", height: 32, color: isDarkMode ? "#cbd5e1" : "text.primary", bgcolor: "transparent" }} />
+                    <input value={row.notes || ""} placeholder="Add notes..." onChange={(e) => handleRowChange(idx, "notes", e.target.value)}
+                      style={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #b0bec5", borderRadius: 4, padding: "0 8px", fontSize: "0.8rem", width: "100%", height: 32, boxSizing: "border-box", color: isDarkMode ? "#cbd5e1" : theme.palette.text.primary, backgroundColor: "transparent", outline: "none", fontFamily: "inherit" }} />
                   </TableCell>
                 </TableRow>
               );
