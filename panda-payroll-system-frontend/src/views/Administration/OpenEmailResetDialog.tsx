@@ -32,6 +32,7 @@ function ResetEmailDialog({
   defaultValues: User;
 }) {
   const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { enqueueSnackbar } = useSnackbar();
   const [emailDisabled, setEmailDisabled] = React.useState(false);
@@ -93,8 +94,8 @@ function ResetEmailDialog({
     mutationFn: resetProfileEmailConfirm,
     onSuccess: () => {
       localStorage.removeItem("token");
+      queryClient.clear();
       navigate("/");
-      queryClient.invalidateQueries({ queryKey: ["current-user"] });
       enqueueSnackbar("Email reset successful!", { variant: "success" });
       reset();
       setEmailDisabled(false);
@@ -130,9 +131,11 @@ function ResetEmailDialog({
   return (
     <Dialog open={open} onClose={handleClose} fullScreen={isMobile}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogTitle>You can Reset Your Email</DialogTitle>
+        <DialogTitle sx={{ color: isDarkMode ? "#fff" : "inherit" }}>
+          You can Reset Your Email
+        </DialogTitle>
         <DialogContent>
-          <Typography variant="body2" sx={{ color: "#525252" }}>
+          <Typography variant="body2" sx={{ color: isDarkMode ? "#cbd5e1" : "#525252" }}>
             We'll send a link to your registered email address. Click the link
             to reset your email securely.
           </Typography>

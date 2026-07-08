@@ -13,6 +13,7 @@ import img3 from "../../assets/img3.png";
 
 function LoginPage() {
   const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const isMdUp = useMediaQuery(theme.breakpoints.up(990));
   const navigate = useNavigate();
 
@@ -44,7 +45,7 @@ function LoginPage() {
         <Stack
           sx={{
             flex: isMdUp ? 3 : 1,
-            backgroundColor: "#f2f2f2",
+            backgroundColor: isDarkMode ? theme.palette.background.default : "#f2f2f2",
             height: isMdUp ? "100vh" : "auto",
             justifyContent: "center",
             alignItems: "center",
@@ -61,7 +62,7 @@ function LoginPage() {
             variant={isMdUp ? "h2" : "h3"}
             sx={{
               fontWeight: "700",
-              color: "#525252",
+              color: isDarkMode ? "#fff" : "#525252",
               marginTop: "1rem",
               marginLeft: "1rem",
               marginRight: "1rem",
@@ -74,7 +75,7 @@ function LoginPage() {
             variant="subtitle2"
             sx={{
               fontWeight: "600",
-              color: "#525252",
+              color: isDarkMode ? "#b0bec5" : "#525252",
               margin: "1rem",
               textAlign: "center",
             }}
@@ -85,7 +86,7 @@ function LoginPage() {
             variant="subtitle2"
             sx={{
               fontWeight: "400",
-              color: "#525252",
+              color: isDarkMode ? "#b0bec5" : "#525252",
               textAlign: "center",
               marginLeft: "3rem",
               marginRight: "3rem",

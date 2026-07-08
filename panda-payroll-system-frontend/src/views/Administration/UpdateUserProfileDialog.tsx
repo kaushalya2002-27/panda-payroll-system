@@ -12,8 +12,8 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
-import { grey } from "@mui/material/colors";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
@@ -38,6 +38,8 @@ export default function UpdateUserProfile({
   handleClose,
   defaultValues,
 }: DialogProps) {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const { enqueueSnackbar } = useSnackbar();
   const { isTablet } = useIsMobile();
 
@@ -90,6 +92,25 @@ export default function UpdateUserProfile({
     });
   };
 
+  // Shared style for the text/autocomplete fields so labels, input text,
+  // and borders are all readable in both light and dark mode.
+  const fieldSx = {
+    flex: 1,
+    margin: "0.5rem",
+    "& .MuiInputBase-input": {
+      color: isDarkMode ? "#ffffff" : "inherit",
+    },
+    "& .MuiInputLabel-root": {
+      color: isDarkMode ? "#cbd5e1" : "inherit",
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+      borderColor: isDarkMode ? "#2e3b63" : undefined,
+    },
+    "& .MuiSvgIcon-root": {
+      color: isDarkMode ? "#cbd5e1" : "inherit",
+    },
+  };
+
   return (
     <Dialog
       open={open}
@@ -100,7 +121,7 @@ export default function UpdateUserProfile({
       fullWidth 
       PaperProps={{
         sx: {
-          backgroundColor: grey[50],
+          backgroundColor: isDarkMode ? "#0b1329" : "#fafafa",
           width: { xs: "92%", sm: "500px" },
           mx: "auto", 
         },
@@ -113,6 +134,7 @@ export default function UpdateUserProfile({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          color: isDarkMode ? "#ffffff" : "inherit",
         }}
       >
         <Typography variant="h6" component="div">
@@ -121,12 +143,12 @@ export default function UpdateUserProfile({
         <IconButton
           onClick={handleClose}
           edge="start"
-          sx={{ color: "#024271" }}
+          sx={{ color: isDarkMode ? "#90caf9" : "#024271" }}
         >
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <Divider />
+      <Divider sx={{ backgroundColor: isDarkMode ? "#2e3b63" : undefined }} />
       <DialogContent>
         <Stack direction="column" gap={1}>
           {isAvailability && (
@@ -140,7 +162,7 @@ export default function UpdateUserProfile({
                   error={!!errors.name}
                   helperText={errors.name ? "Required *" : ""}
                   size="small"
-                  sx={{ flex: 1, margin: "0.5rem" }}
+                  sx={fieldSx}
                   {...register("name", { required: true })}
                 />
               </Box>
@@ -154,7 +176,7 @@ export default function UpdateUserProfile({
                   error={!!errors.mobile}
                   helperText={errors.mobile ? "Required *" : ""}
                   size="small"
-                  sx={{ flex: 1, margin: "0.5rem" }}
+                  sx={fieldSx}
                   {...register("mobile", { required: true })}
                 />
               </Box>
@@ -168,7 +190,7 @@ export default function UpdateUserProfile({
                     <Autocomplete
                       options={genderOptions}
                       size="small"
-                      sx={{ flex: 1, margin: "0.5rem" }}
+                      sx={fieldSx}
                       value={field.value || null}
                       onChange={(_, value) => field.onChange(value)}
                       renderInput={(params) => (
@@ -188,20 +210,23 @@ export default function UpdateUserProfile({
           )}
         </Stack>
       </DialogContent>
-      <Divider />
+      <Divider sx={{ backgroundColor: isDarkMode ? "#2e3b63" : undefined }} />
       <DialogActions sx={{ padding: "1rem" }}>
         <Button
           onClick={() => {
             resetForm();
             handleClose();
           }}
-          sx={{ color: "var(--pallet-blue)" }}
+          sx={{ color: isDarkMode ? "#90caf9" : "var(--pallet-blue)" }}
         >
           Cancel
         </Button>
         <CustomButton
           variant="contained"
-          sx={{ backgroundColor: "var(--pallet-blue)" }}
+          sx={{
+            backgroundColor: isDarkMode ? "#90caf9" : "var(--pallet-blue)",
+            color: isDarkMode ? "#0b1329" : "#ffffff",
+          }}
           disabled={isPending}
           size="medium"
           onClick={handleSubmit(onSubmitForm)}

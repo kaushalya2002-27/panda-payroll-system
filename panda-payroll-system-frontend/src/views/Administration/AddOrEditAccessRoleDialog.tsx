@@ -51,6 +51,7 @@ function AddOrEditAccessRoleDialog({
   onSubmit: (data: UserRole) => void;
 }) {
   const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const {
     register,
     handleSubmit,
@@ -95,7 +96,7 @@ function AddOrEditAccessRoleDialog({
       fullScreen={true}
       PaperProps={{
         style: {
-          backgroundColor: grey[50],
+          backgroundColor: isDarkMode ? theme.palette.background.paper : grey[50],
         },
         component: "form",
       }}
@@ -171,7 +172,13 @@ function AddOrEditAccessRoleDialog({
             />
           </Box>
           <Box sx={{ paddingY: "1rem" }}>
-            <Typography variant="subtitle2" sx={{ marginBottom: "1rem" }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                marginBottom: "1rem",
+                color: isDarkMode ? "#fff" : "inherit",
+              }}
+            >
               User Roles Permission
             </Typography>
             <Alert severity="info">

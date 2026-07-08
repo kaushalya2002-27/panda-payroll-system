@@ -12,6 +12,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { DrawerContentItem } from "../../components/ViewDataDrawer";
 import useIsMobile from "../../customHooks/useIsMobile";
 import { updateUserProfileImage, User } from "../../api/userApi";
@@ -30,6 +31,8 @@ import CustomButton from "../../components/CustomButton";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 function ViewUserContent({ selectedUser }: { selectedUser: User }) {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const { isTablet } = useIsMobile();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -84,6 +87,7 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
         px: "1rem",
         boxShadow: "0 0 10px rgba(0,0,0,0.1)",
         my: 2,
+        backgroundColor: isDarkMode ? "#1c2541" : undefined,
       }}
     >
       <Box
@@ -105,7 +109,7 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
             "& .MuiBadge-badge": {
               backgroundColor: statusColor,
               color: statusColor,
-              boxShadow: "0 0 0 2px white",
+              boxShadow: isDarkMode ? "0 0 0 2px #1c2541" : "0 0 0 2px white",
               height: "16px",
               width: "16px",
               borderRadius: "50%",
@@ -123,7 +127,7 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
           textAlign={"center"}
           sx={{
             fontSize: "1.5rem",
-            color: "var(--pallet-dark-blue)",
+            color: isDarkMode ? "#90caf9" : "var(--pallet-dark-blue)",
           }}
         >
           {selectedUser?.name}
@@ -135,7 +139,15 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
           }}
           gap={2}
         >
-          <CustomButton variant="outlined" component="label" sx={{ mt: 2 }}>
+          <CustomButton
+            variant="outlined"
+            component="label"
+            sx={{
+              mt: 2,
+              color: isDarkMode ? "#90caf9" : undefined,
+              borderColor: isDarkMode ? "#90caf9" : undefined,
+            }}
+          >
             Change Profile Image
             <input
               type="file"
@@ -149,7 +161,11 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
             <CustomButton
               variant="contained"
               onClick={saveImage}
-              sx={{ mt: 2, backgroundColor: "var(--pallet-blue)" }}
+              sx={{
+                mt: 2,
+                backgroundColor: isDarkMode ? "#90caf9" : "var(--pallet-blue)",
+                color: isDarkMode ? "#0b1329" : "#ffffff",
+              }}
               disabled={isPending}
               endIcon={
                 isPending && (
@@ -167,7 +183,7 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
         sx={{
           display: "flex",
           flexDirection: "column",
-          backgroundColor: "#fff",
+          backgroundColor: isDarkMode ? "#1c2541" : "#fff",
           flex: 2,
           p: "3rem",
         }}
@@ -186,12 +202,15 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
                   aria-label="edit"
                   onClick={() => setOpenEditUserRoleDialog(true)}
                 >
-                  <EditOutlinedIcon sx={{ color: "var(--pallet-blue)" }} />
+                  <EditOutlinedIcon sx={{ color: isDarkMode ? "#90caf9" : "var(--pallet-blue)" }} />
                 </IconButton>
               ) : (
                 <CustomButton
                   variant="contained"
-                  sx={{ backgroundColor: "var(--pallet-blue)" }}
+                  sx={{
+                    backgroundColor: isDarkMode ? "#90caf9" : "var(--pallet-blue)",
+                    color: isDarkMode ? "#0b1329" : "#ffffff",
+                  }}
                   size="medium"
                   onClick={() => setOpenEditUserRoleDialog(true)}
                   startIcon={<EditOutlinedIcon />}
@@ -252,13 +271,14 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
               paddingTop: 0,
               borderRadius: "8px",
               marginTop: "1rem",
+              backgroundColor: isDarkMode ? "#131a30" : undefined,
             }}
           >
             <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
+              expandIcon={<ExpandMoreIcon sx={{ color: isDarkMode ? "#94a3b8" : undefined }} />}
               aria-controls="panel1a-content"
               style={{
-                borderBottom: `1px solid${colors.grey[100]}`,
+                borderBottom: isDarkMode ? "1px solid #2e3b63" : `1px solid${colors.grey[100]}`,
                 borderRadius: "8px",
               }}
               id="panel1a-header"

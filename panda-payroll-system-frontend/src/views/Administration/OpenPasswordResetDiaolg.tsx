@@ -22,6 +22,7 @@ import { PasswordReset, User, userPasswordReset } from "../../api/userApi";
 import { useMutation } from "@tanstack/react-query";
 import queryClient from "../../state/queryClient";
 import { useNavigate } from "react-router";
+import { useTheme } from "@mui/material/styles";
 
 type DialogProps = {
   open: boolean;
@@ -39,6 +40,8 @@ export default function PasswordResetDialog({
   isSubmitting = false,
 }: DialogProps) {
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const { isMobile } = useIsMobile();
 
   const {
@@ -61,13 +64,13 @@ export default function PasswordResetDialog({
   const { mutate: resetUserPasswordMutation, isPending } = useMutation({
     mutationFn: userPasswordReset,
     onSuccess: () => {
-      localStorage.removeItem("token");
-      navigate("/");
-      queryClient.invalidateQueries({ queryKey: ["current-user"] });
-      enqueueSnackbar("Password Reset Successfully", {
-        variant: "success",
-      });
-    },
+    localStorage.removeItem("token");
+    queryClient.clear();
+    navigate("/");
+    enqueueSnackbar("Password Reset Successfully", {
+      variant: "success",
+    });
+  },
     onError: (error: any) => {
       enqueueSnackbar(error?.data?.message ?? `User Role Update Failed`, {
         variant: "error",
@@ -87,7 +90,7 @@ export default function PasswordResetDialog({
       fullScreen={isMobile}
       PaperProps={{
         style: {
-          backgroundColor: grey[50],
+          backgroundColor: isDarkMode ? theme.palette.background.paper : grey[50],
         },
         component: "form",
       }}
@@ -100,9 +103,13 @@ export default function PasswordResetDialog({
           justifyContent: "space-between",
         }}
       >
-        <Typography variant="h6" textAlign={"center"}>
-          Password Reset For {defaultValues.name}
-        </Typography>
+        <Typography
+        variant="h6"
+        textAlign={"center"}
+        sx={{ color: isDarkMode ? "#fff" : "inherit" }}
+      >
+        Password Reset For {defaultValues.name}
+      </Typography>
         <IconButton
           onClick={() => {
             resetForm();

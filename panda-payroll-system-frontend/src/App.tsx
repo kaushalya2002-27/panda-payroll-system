@@ -12,16 +12,27 @@ import getAppTheme from "./theme.ts";
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 function App() {
-  const [mode, setMode] = useState<"light" | "dark">("light");
+  const [mode, setMode] = useState<"light" | "dark">(() => {
+  const savedMode = localStorage.getItem("themeMode");
+  if (savedMode === "dark" || savedMode === "light") {
+    return savedMode;
+  }
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  return prefersDark ? "dark" : "light";
+});
 
   const colorMode = useMemo(
-    () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
-      },
-    }),
-    []
-  );
+  () => ({
+    toggleColorMode: () => {
+      setMode((prevMode) => {
+        const newMode = prevMode === "light" ? "dark" : "light";
+        localStorage.setItem("themeMode", newMode);
+        return newMode;
+      });
+    },
+  }),
+  []
+);
 
   const theme = useMemo(() => getAppTheme(mode), [mode]);
 

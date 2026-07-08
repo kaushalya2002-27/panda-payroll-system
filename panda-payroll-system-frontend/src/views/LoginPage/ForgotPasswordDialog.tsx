@@ -17,6 +17,7 @@ import { useTheme } from "@mui/material/styles";
 
 function ForgotPasswordDialog({ open, handleClose }: { open: boolean; handleClose: () => void }) {
   const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { enqueueSnackbar } = useSnackbar();
   const [emailDisabled, setEmailDisabled] = React.useState(false);
@@ -90,10 +91,21 @@ function ForgotPasswordDialog({ open, handleClose }: { open: boolean; handleClos
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} fullScreen={isMobile}>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullScreen={isMobile}
+      PaperProps={{
+        style: {
+          backgroundColor: isDarkMode ? theme.palette.background.paper : "#fff",
+        },
+      }}
+    >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogTitle>Don't Worry</DialogTitle>
-        <DialogContent>
+        <DialogTitle sx={{ color: isDarkMode ? "#fff" : "inherit" }}>
+          Don't Worry
+        </DialogTitle>
+          <DialogContent>
           <Typography variant="body2" sx={{ color: "#525252" }}>
             We are here to help you recover your password. Enter the email associated with your account, and we'll send
             an email with instructions to reset your password.

@@ -39,6 +39,7 @@ function ViewProfileDataDrawer({
   fullScreen?: boolean;
 }) {
   const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("md")
   );
@@ -52,6 +53,7 @@ function ViewProfileDataDrawer({
         sx: {
           width: isMobile || fullScreen ? "100vw" : "30vw",
           padding: 2,
+          backgroundColor: isDarkMode ? "#0b1329" : undefined,
         },
       }}
     >
@@ -75,6 +77,9 @@ export function DrawerProfileHeader({
   disableEdit?: boolean;
   disableDelete?: boolean;
 }) {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
+
   return (
     <Box
       sx={{
@@ -84,7 +89,7 @@ export function DrawerProfileHeader({
     >
       <Box sx={{ display: "flex", justifyContent: "flex-end", my: 1 }}>
         <IconButton aria-label="delete" onClick={handleClose}>
-          <CloseIcon sx={{ color: "var(--pallet-light-grey)" }} />
+          <CloseIcon sx={{ color: isDarkMode ? "#94a3b8" : "var(--pallet-light-grey)" }} />
         </IconButton>
       </Box>
       <Box
@@ -94,7 +99,9 @@ export function DrawerProfileHeader({
           alignItems: "center",
         }}
       >
-        <Typography variant="h6">{title}</Typography>
+        <Typography variant="h6" sx={{ color: isDarkMode ? "#ffffff" : "inherit" }}>
+          {title}
+        </Typography>
       </Box>
     </Box>
   );
@@ -109,6 +116,8 @@ export function DrawerUpdateButtons({
   onResetPassword: () => void;
   disableEdit?: boolean;
 }) {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const { isTablet } = useIsMobile();
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const navigate = useNavigate();
@@ -132,14 +141,17 @@ export function DrawerUpdateButtons({
                 onClick={onResetPassword}
                 disabled={disableEdit}
               >
-                <VpnKeyOutlinedIcon sx={{ color: "var(--pallet-blue)" }} />
+                <VpnKeyOutlinedIcon sx={{ color: isDarkMode ? "#90caf9" : "var(--pallet-blue)" }} />
               </IconButton>
             </Box>
           ) : (
             <Box>
               <CustomButton
                 variant="contained"
-                sx={{ backgroundColor: "var(--pallet-blue)" }}
+                sx={{
+                  backgroundColor: isDarkMode ? "#90caf9" : "var(--pallet-blue)",
+                  color: isDarkMode ? "#0b1329" : "#ffffff",
+                }}
                 size="medium"
                 startIcon={<VpnKeyOutlinedIcon />}
                 onClick={onResetPassword}
@@ -157,14 +169,17 @@ export function DrawerUpdateButtons({
                 onClick={onResetEmail}
                 disabled={disableEdit}
               >
-                <EmailOutlinedIcon sx={{ color: "var(--pallet-blue)" }} />
+                <EmailOutlinedIcon sx={{ color: isDarkMode ? "#90caf9" : "var(--pallet-blue)" }} />
               </IconButton>
             </Box>
           ) : (
             <Box>
               <CustomButton
                 variant="contained"
-                sx={{ backgroundColor: "var(--pallet-blue)" }}
+                sx={{
+                  backgroundColor: isDarkMode ? "#90caf9" : "var(--pallet-blue)",
+                  color: isDarkMode ? "#0b1329" : "#ffffff",
+                }}
                 size="medium"
                 onClick={onResetEmail}
                 startIcon={<EmailOutlinedIcon />}
@@ -233,6 +248,9 @@ export function DrawerContentItem({
   isRichText?: boolean;
   sx?: SxProps;
 }) {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
+
   return (
     <Box
       sx={{
@@ -244,17 +262,32 @@ export function DrawerContentItem({
     >
       <Typography
         variant="caption"
-        sx={{ paddingBottom: 0, color: "var(--pallet-grey)" }}
+        sx={{
+          paddingBottom: 0,
+          color: isDarkMode ? "#90caf9 !important" : "var(--pallet-grey)",
+        }}
       >
         {label}
       </Typography>
       {isRichText ? (
         <Typography
           variant="body2"
+          sx={{
+            color: isDarkMode ? "#ffffff !important" : "inherit",
+            fontWeight: isDarkMode ? 600 : 400,
+          }}
           dangerouslySetInnerHTML={{ __html: value ?? "--" }}
         />
       ) : (
-        <Typography variant="body2">{value ?? "--"}</Typography>
+        <Typography
+          variant="body2"
+          sx={{
+            color: isDarkMode ? "#ffffff !important" : "inherit",
+            fontWeight: isDarkMode ? 600 : 400,
+          }}
+        >
+          {value ?? "--"}
+        </Typography>
       )}
     </Box>
   );
