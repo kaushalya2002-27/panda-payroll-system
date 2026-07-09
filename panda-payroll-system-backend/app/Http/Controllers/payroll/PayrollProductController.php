@@ -115,4 +115,26 @@ class PayrollProductController extends Controller
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        try {
+            $deleted = DB::table('payroll_products')->where('id', $id)->delete();
+
+            if (! $deleted) {
+                return response()->json(['success' => false, 'message' => 'Product not found.'], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Product deleted successfully!'
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
 }
