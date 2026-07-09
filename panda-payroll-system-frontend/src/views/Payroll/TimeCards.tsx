@@ -10,6 +10,8 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import SaveIcon from "@mui/icons-material/Save";
+import useCurrentUser from "../../hooks/useCurrentUser";
+import { PermissionKeys } from "../Administration/SectionList";
 
 const API = "http://localhost:8000/api";
 
@@ -59,6 +61,14 @@ const mapRow = (row: any): TimecardRow => ({
 export default function TimeCards() {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark"; 
+
+  const { user } = useCurrentUser();
+  const userPermissionObject = user?.permissionObject;
+  const canCreate = userPermissionObject?.[PermissionKeys.PAYROLL_TIME_CARDS_CREATE];
+  const canEditPermission = userPermissionObject?.[PermissionKeys.PAYROLL_TIME_CARDS_EDIT];
+  const canModify = canCreate || canEditPermission;
+  const canViewDetailSheets = userPermissionObject?.[PermissionKeys.PAYROLL_DETAIL_SHEETS_VIEW];
+  const canViewPaySlips = userPermissionObject?.[PermissionKeys.PAYROLL_PAY_SLIPS_VIEW];
 
   const [employees, setEmployees] = useState<EmployeeType[]>([]);
   const [products, setProducts]   = useState<ProductType[]>([]);
@@ -379,6 +389,7 @@ export default function TimeCards() {
               {loading ? "Loading..." : "Load"}
             </Button>
             
+            {canViewDetailSheets && (
             <Button 
               variant="outlined" 
               startIcon={<ReceiptLongIcon />} 
@@ -388,7 +399,9 @@ export default function TimeCards() {
             >
               Detail Sheet
             </Button>
+          )}
             
+            {canViewPaySlips && (
             <Button 
               variant="outlined" 
               startIcon={<PaymentsIcon />} 
@@ -398,6 +411,7 @@ export default function TimeCards() {
             >
               Pay Slip
             </Button>
+          )}
           </Grid>
         </Grid>
       </Paper>
@@ -432,6 +446,7 @@ export default function TimeCards() {
               size="small" 
               value={globalShift} 
               onChange={(e) => handleShiftChange(e.target.value)}
+              disabled={!canModify}
               sx={{ 
                 fontSize: "0.85rem", 
                 height: 32, 
@@ -449,21 +464,23 @@ export default function TimeCards() {
           </Box>
         </Box>
         
-        <Button 
-          variant="contained" 
-          startIcon={<SaveIcon />} 
-          onClick={handleSave} 
-          disabled={!selectedEmployee}
-          sx={{ 
-            bgcolor: "#1976d2", 
-            "&:hover": { bgcolor: "#1565c0" }, 
-            textTransform: "none",
-            height: 36,
-            width: { xs: "100%", sm: "auto" }
-          }}
-        >
-          Save Time Card
-        </Button>
+        {canModify && (
+          <Button 
+            variant="contained" 
+            startIcon={<SaveIcon />} 
+            onClick={handleSave} 
+            disabled={!selectedEmployee}
+            sx={{ 
+              bgcolor: "#1976d2", 
+              "&:hover": { bgcolor: "#1565c0" }, 
+              textTransform: "none",
+              height: 36,
+              width: { xs: "100%", sm: "auto" }
+            }}
+          >
+            Save Time Card
+          </Button>
+        )}
       </Box>
 
       <TableContainer component={Paper} sx={{ 
@@ -482,7 +499,6 @@ export default function TimeCards() {
                 fontWeight: 700, 
                 color: isDarkMode ? "#90caf9" : "#024271", 
                 fontSize: "0.75rem", 
-                // මෙතනින් සුදු පාට lines සම්පූර්ණයෙන්ම ඉවත් කරලා තියෙනවා:
                 border: "none !important",
                 boxShadow: "none !important",
                 borderBottom: isDarkMode ? "1px solid #2e3b63 !important" : "1px solid #aacdfa !important",
@@ -513,6 +529,7 @@ export default function TimeCards() {
               const rowBg = getRowBgColor(row.day, isDarkMode);
               const inputBg = (row.status !== "work") ? (isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.04)") : "transparent";
               const isLeave = row.status === "leave";
+              const rowDisabled = isLeave || !canModify;
 
               return (
                 <TableRow 
@@ -531,6 +548,7 @@ export default function TimeCards() {
                   <TableCell>
                     <select
                       value={row.status}
+                      disabled={!canModify}
                       onChange={(e) => handleRowChange(idx, "status", e.target.value)}
                       style={{
                         fontSize: "0.85rem",
@@ -552,11 +570,11 @@ export default function TimeCards() {
                   </TableCell>
                   <TableCell align="center">
                     <Box sx={{ display: "flex", gap: 0.5, justifyContent: "center", alignItems: "center" }}>
-                      <input value={row.start_time || ""} disabled={row.status !== "work"}
+                      <input value={row.start_time || ""} disabled={row.status !== "work" || !canModify}
                         onChange={(e) => handleRowChange(idx, "start_time", e.target.value)}
                         style={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #b0bec5", borderRadius: 4, padding: "0 4px", fontSize: "0.8rem", fontWeight: 600, width: 55, height: 32, boxSizing: "border-box", backgroundColor: inputBg, color: isDarkMode ? "#cbd5e1" : theme.palette.text.primary, textAlign: "center", outline: "none", fontFamily: "inherit" }} />
                       <Typography variant="caption" sx={{ fontWeight: 600, color: "text.secondary" }}>-</Typography>
-                      <input value={row.end_time || ""} disabled={row.status !== "work"}
+                      <input value={row.end_time || ""} disabled={row.status !== "work" || !canModify}
                         onChange={(e) => handleRowChange(idx, "end_time", e.target.value)}
                         style={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #b0bec5", borderRadius: 4, padding: "0 4px", fontSize: "0.8rem", fontWeight: 600, width: 55, height: 32, boxSizing: "border-box", backgroundColor: inputBg, color: isDarkMode ? "#cbd5e1" : theme.palette.text.primary, textAlign: "center", outline: "none", fontFamily: "inherit" }} />
                     </Box>
@@ -564,9 +582,9 @@ export default function TimeCards() {
                   <TableCell align="center">
                     <input
                       value={row.hours || ""}
-                      disabled={isLeave}
+                      disabled={rowDisabled}
                       onChange={(e) => handleRowChange(idx, "hours", e.target.value)}
-                      style={tableInputStyles(isLeave)}
+                      style={tableInputStyles(rowDisabled)}
                     />
                   </TableCell>
                   {products.map(prod => (
@@ -574,9 +592,9 @@ export default function TimeCards() {
                       <input
                         value={row.product_quantities[prod.id] === 0 ? "" : row.product_quantities[prod.id] || ""}
                         placeholder="0"
-                        disabled={isLeave}
+                        disabled={rowDisabled}
                         onChange={(e) => handleQtyChange(idx, prod.id, e.target.value)}
-                        style={tableInputStyles(isLeave)}
+                        style={tableInputStyles(rowDisabled)}
                       />
                     </TableCell>
                   ))}
@@ -587,9 +605,9 @@ export default function TimeCards() {
                     <TableCell key={field} align="center">
                       <input
                         value={row[field] || ""}
-                        disabled={isLeave}
+                        disabled={rowDisabled}
                         onChange={(e) => handleRowChange(idx, field, e.target.value)}
-                        style={tableInputStyles(isLeave)}
+                        style={tableInputStyles(rowDisabled)}
                       />
                     </TableCell>
                   ))}
@@ -597,7 +615,7 @@ export default function TimeCards() {
                     {displayGross}
                   </TableCell>
                   <TableCell align="center">
-                    <input value={row.notes || ""} placeholder="Add notes..." onChange={(e) => handleRowChange(idx, "notes", e.target.value)}
+                    <input value={row.notes || ""} placeholder="Add notes..." disabled={!canModify} onChange={(e) => handleRowChange(idx, "notes", e.target.value)}
                       style={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #b0bec5", borderRadius: 4, padding: "0 8px", fontSize: "0.8rem", width: "100%", height: 32, boxSizing: "border-box", color: isDarkMode ? "#cbd5e1" : theme.palette.text.primary, backgroundColor: "transparent", outline: "none", fontFamily: "inherit" }} />
                   </TableCell>
                 </TableRow>

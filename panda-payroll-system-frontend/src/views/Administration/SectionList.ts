@@ -59,21 +59,11 @@ export const PermissionSectionsMap: PermissionSection[] = [
         key: "PAYROLL_ALL_EMPLOYEES",
         permissionsExists: {
           VIEW: true,
-          CREATE: false,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Add Employee",
-        key: "PAYROLL_ADD_EMPLOYEE",
-        permissionsExists: {
-          VIEW: true,
           CREATE: true,
-          EDIT: false,
+          EDIT: true,
           DELETE: false,
         },
-      },
+      },     
       {
         name: "Time Cards",
         key: "PAYROLL_TIME_CARDS",
@@ -125,8 +115,18 @@ export const PermissionSectionsMap: PermissionSection[] = [
         },
       },
       {
-        name: "Departments & Positions",
-        key: "PAYROLL_DEPARTMENTS_POSITIONS",
+        name: "Departments",
+        key: "PAYROLL_DEPARTMENTS",
+        permissionsExists: {
+          VIEW: true,
+          CREATE: true,
+          EDIT: true,
+          DELETE: true,
+        },
+      },
+      {
+        name: "Job Positions",
+        key: "PAYROLL_JOB_POSITIONS",
         permissionsExists: {
           VIEW: true,
           CREATE: true,
@@ -179,6 +179,7 @@ export enum PermissionKeys {
   PAYROLL_ALL_EMPLOYEES_VIEW = "PAYROLL_ALL_EMPLOYEES_VIEW",
   PAYROLL_ALL_EMPLOYEES_EDIT = "PAYROLL_ALL_EMPLOYEES_EDIT",
   PAYROLL_ALL_EMPLOYEES_DELETE = "PAYROLL_ALL_EMPLOYEES_DELETE",
+  PAYROLL_ALL_EMPLOYEES_CREATE = "PAYROLL_ALL_EMPLOYEES_CREATE",
   PAYROLL_ADD_EMPLOYEE_VIEW = "PAYROLL_ADD_EMPLOYEE_VIEW",
   PAYROLL_ADD_EMPLOYEE_CREATE = "PAYROLL_ADD_EMPLOYEE_CREATE",
   PAYROLL_TIME_CARDS_VIEW = "PAYROLL_TIME_CARDS_VIEW",
@@ -191,10 +192,14 @@ export enum PermissionKeys {
   PAYROLL_PRODUCTS_RATES_CREATE = "PAYROLL_PRODUCTS_RATES_CREATE",
   PAYROLL_PRODUCTS_RATES_EDIT = "PAYROLL_PRODUCTS_RATES_EDIT",
   PAYROLL_PRODUCTS_RATES_DELETE = "PAYROLL_PRODUCTS_RATES_DELETE",
-  PAYROLL_DEPARTMENTS_POSITIONS_VIEW = "PAYROLL_DEPARTMENTS_POSITIONS_VIEW",
-  PAYROLL_DEPARTMENTS_POSITIONS_CREATE = "PAYROLL_DEPARTMENTS_POSITIONS_CREATE",
-  PAYROLL_DEPARTMENTS_POSITIONS_EDIT = "PAYROLL_DEPARTMENTS_POSITIONS_EDIT",
-  PAYROLL_DEPARTMENTS_POSITIONS_DELETE = "PAYROLL_DEPARTMENTS_POSITIONS_DELETE",
+  PAYROLL_DEPARTMENTS_VIEW = "PAYROLL_DEPARTMENTS_VIEW",
+  PAYROLL_DEPARTMENTS_CREATE = "PAYROLL_DEPARTMENTS_CREATE",
+  PAYROLL_DEPARTMENTS_EDIT = "PAYROLL_DEPARTMENTS_EDIT",
+  PAYROLL_DEPARTMENTS_DELETE = "PAYROLL_DEPARTMENTS_DELETE",
+  PAYROLL_JOB_POSITIONS_VIEW = "PAYROLL_JOB_POSITIONS_VIEW",
+  PAYROLL_JOB_POSITIONS_CREATE = "PAYROLL_JOB_POSITIONS_CREATE",
+  PAYROLL_JOB_POSITIONS_EDIT = "PAYROLL_JOB_POSITIONS_EDIT",
+  PAYROLL_JOB_POSITIONS_DELETE = "PAYROLL_JOB_POSITIONS_DELETE",
 }
 
 // Create the Zod schema using the enum values

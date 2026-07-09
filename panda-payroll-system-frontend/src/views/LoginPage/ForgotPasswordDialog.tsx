@@ -106,7 +106,7 @@ function ForgotPasswordDialog({ open, handleClose }: { open: boolean; handleClos
           Don't Worry
         </DialogTitle>
           <DialogContent>
-          <Typography variant="body2" sx={{ color: "#525252" }}>
+          <Typography variant="body2" sx={{ color: isDarkMode ? "#cbd5e1" : "#525252" }}>
             We are here to help you recover your password. Enter the email associated with your account, and we'll send
             an email with instructions to reset your password.
           </Typography>

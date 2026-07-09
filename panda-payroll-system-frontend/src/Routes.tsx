@@ -71,7 +71,7 @@ function withoutLayout(Component: React.LazyExoticComponent<any>) {
 const ProtectedRoute = () => {
   const { user, status } = useCurrentUser();
 
-  if (status === "loading" || status === "idle" || status === "pending") {
+  if (status === "pending") {
     return <PageLoader />;
   }
 
@@ -93,6 +93,11 @@ const AppRoutes = () => {
       return user?.permissionObject;
     }
   }, [user]);
+
+  if (status === "pending") {
+  return <PageLoader />;
+
+  }
 
   return (
     <Routes>
@@ -117,7 +122,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             UserTable,
-            !userPermissionObject?.[PermissionKeys.INSIGHT_VIEW]
+            !userPermissionObject?.[PermissionKeys.ADMIN_USERS_VIEW]
           )}
         />
         <Route
@@ -135,7 +140,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             PayrollDashboard,
-            false 
+            !userPermissionObject?.[PermissionKeys.PAYROLL_DASHBOARD_VIEW]
           )}
         />
         <Route
@@ -143,7 +148,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             AllEmployees,
-            false
+            !userPermissionObject?.[PermissionKeys.PAYROLL_ALL_EMPLOYEES_VIEW]
           )}
         />
         <Route
@@ -151,7 +156,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             ViewEmployee,
-            false
+            !userPermissionObject?.[PermissionKeys.PAYROLL_ALL_EMPLOYEES_VIEW]
           )}
         />
         <Route
@@ -159,7 +164,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             EditEmployee,
-            false
+            !userPermissionObject?.[PermissionKeys.PAYROLL_ALL_EMPLOYEES_EDIT]
           )}
         />
         <Route
@@ -167,7 +172,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             AddEmployee,
-            false
+            !userPermissionObject?.[PermissionKeys.PAYROLL_ALL_EMPLOYEES_CREATE]
           )}
         />
         <Route
@@ -175,7 +180,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             TimeCards,
-            false
+            !userPermissionObject?.[PermissionKeys.PAYROLL_TIME_CARDS_VIEW]
           )}
         />
         <Route
@@ -183,7 +188,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             MonthlySummary,
-            false
+            !userPermissionObject?.[PermissionKeys.PAYROLL_MONTHLY_SUMMARY_VIEW]
           )}
         />
         <Route
@@ -191,7 +196,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             PaySlips,
-            false
+            !userPermissionObject?.[PermissionKeys.PAYROLL_PAY_SLIPS_VIEW]
           )}
         />
         <Route
@@ -199,7 +204,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             DetailSheets,
-            false
+            !userPermissionObject?.[PermissionKeys.PAYROLL_DETAIL_SHEETS_VIEW]
           )}
         />
         <Route
@@ -207,7 +212,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             ProductsAndRates,
-            false
+            !userPermissionObject?.[PermissionKeys.PAYROLL_PRODUCTS_RATES_VIEW]
           )}
         />
         <Route
@@ -215,7 +220,8 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             PayrollDepartments,
-            false
+            !userPermissionObject?.[PermissionKeys.PAYROLL_DEPARTMENTS_VIEW] &&
+            !userPermissionObject?.[PermissionKeys.PAYROLL_JOB_POSITIONS_VIEW]
           )}
         />
       </Route>

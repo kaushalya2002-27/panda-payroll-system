@@ -34,11 +34,15 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import DynamicFeedIcon from "@mui/icons-material/DynamicFeed";
+import useCurrentUser from "../../hooks/useCurrentUser";
+import { PermissionKeys } from "../Administration/SectionList";
 
 export default function PayrollDashboard() {
   const navigate = useNavigate();
   const theme = useTheme();
-  const isDarkMode = theme.palette.mode === "dark"; 
+  const isDarkMode = theme.palette.mode === "dark";
+  const { user } = useCurrentUser();
+  const userPermissionObject = user?.permissionObject;
 
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -80,13 +84,15 @@ export default function PayrollDashboard() {
     { title: "MONTH PAYROLL", value: cards.total_payroll, icon: <AccountBalanceWalletIcon sx={{ color: isDarkMode ? "#90caf9" : "#1a73e8" }} />, bgColor: isDarkMode ? "rgba(26, 115, 232, 0.15)" : "#e8f0fe" }
   ];
 
-  const quickActions = [
-    { text: "Enter Time Cards", path: "/payroll/time-cards", icon: <DynamicFeedIcon fontSize="small" sx={{ color: isDarkMode ? "#90caf9" : "#1a73e8" }} /> },
-    { text: "Monthly Summary", path: "/payroll/summary", icon: <DynamicFeedIcon fontSize="small" sx={{ color: isDarkMode ? "#90caf9" : "#1a73e8" }} /> },
-    { text: "Print Pay Slips", path: "/payroll/slips", icon: <DynamicFeedIcon fontSize="small" sx={{ color: isDarkMode ? "#90caf9" : "#1a73e8" }} /> },
-    { text: "Detail Sheets", path: "/payroll/detail-sheets", icon: <DynamicFeedIcon fontSize="small" sx={{ color: isDarkMode ? "#90caf9" : "#1a73e8" }} /> },
-    { text: "Add Employee", path: "/payroll/add-employee", icon: <PersonAddAltIcon fontSize="small" sx={{ color: isDarkMode ? "#90caf9" : "#1a73e8" }} /> },
-  ];
+  const allQuickActions = [
+  { text: "Enter Time Cards", path: "/payroll/time-cards", icon: <DynamicFeedIcon fontSize="small" sx={{ color: isDarkMode ? "#90caf9" : "#1a73e8" }} />, permission: PermissionKeys.PAYROLL_TIME_CARDS_VIEW },
+  { text: "Monthly Summary", path: "/payroll/summary", icon: <DynamicFeedIcon fontSize="small" sx={{ color: isDarkMode ? "#90caf9" : "#1a73e8" }} />, permission: PermissionKeys.PAYROLL_MONTHLY_SUMMARY_VIEW },
+  { text: "Print Pay Slips", path: "/payroll/slips", icon: <DynamicFeedIcon fontSize="small" sx={{ color: isDarkMode ? "#90caf9" : "#1a73e8" }} />, permission: PermissionKeys.PAYROLL_PAY_SLIPS_VIEW },
+  { text: "Detail Sheets", path: "/payroll/detail-sheets", icon: <DynamicFeedIcon fontSize="small" sx={{ color: isDarkMode ? "#90caf9" : "#1a73e8" }} />, permission: PermissionKeys.PAYROLL_DETAIL_SHEETS_VIEW },
+  { text: "Add Employee", path: "/payroll/add-employee", icon: <PersonAddAltIcon fontSize="small" sx={{ color: isDarkMode ? "#90caf9" : "#1a73e8" }} />, permission: PermissionKeys.PAYROLL_ALL_EMPLOYEES_CREATE },
+];
+
+const quickActions = allQuickActions.filter((action) => userPermissionObject?.[action.permission]);
 
   return (
     <Box sx={{ p: 1 }}>
@@ -171,10 +177,11 @@ export default function PayrollDashboard() {
             <Typography variant="subtitle1" sx={{ fontWeight: 600, color: isDarkMode ? "#ffffff" : "#1c2434" }}>
               Recently Added Employees
             </Typography>
-            <Button 
-              variant="outlined" 
-              size="small" 
-              onClick={() => navigate("/payroll/employees")}
+            {userPermissionObject?.[PermissionKeys.PAYROLL_ALL_EMPLOYEES_VIEW] && (
+          <Button 
+            variant="outlined" 
+            size="small" 
+            onClick={() => navigate("/payroll/employees")}
               sx={{ 
                 textTransform: "none", 
                 borderRadius: 1.5, 
@@ -182,9 +189,10 @@ export default function PayrollDashboard() {
                 borderColor: isDarkMode ? "#90caf9" : "#1a73e8", 
                 "&:hover": { borderColor: isDarkMode ? "#64b5f6" : "#1557b0", bgcolor: isDarkMode ? "rgba(144, 202, 249, 0.08)" : "#f1f7fe" } 
               }}
-            >
+             >
               View All
             </Button>
+          )}
           </Box>
 
           <TableContainer component={Paper} sx={{ 

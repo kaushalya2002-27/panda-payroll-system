@@ -23,15 +23,20 @@ import {
 // Icons
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useTheme } from "@mui/material/styles"; 
+import useCurrentUser from "../../hooks/useCurrentUser";
+import { PermissionKeys } from "../Administration/SectionList";
 
 const API_BASE_URL = "http://127.0.0.1:8000/api";
 
 export default function ProductsAndRates() {
   const theme = useTheme(); 
-  const isDarkMode = theme.palette.mode === "dark"; 
+  const isDarkMode = theme.palette.mode === "dark";
+  const { user } = useCurrentUser();
+  const userPermissionObject = user?.permissionObject;
 
   // Form States
   const [editId, setEditId] = useState<number | null>(null); 
@@ -118,6 +123,27 @@ export default function ProductsAndRates() {
     setStatus("Active");
   };
 
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) {
+      return;
+    }
+    try {
+      await axios.delete(`${API_BASE_URL}/payroll-products/${id}`);
+      alert("Product deleted successfully!");
+      if (editId === id) {
+        handleClear();
+      }
+      fetchProducts();
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      alert("Error occurred while deleting product!");
+    }
+  };
+
+  const canDelete = userPermissionObject?.[PermissionKeys.PAYROLL_PRODUCTS_RATES_DELETE];
+  const canEdit = userPermissionObject?.[PermissionKeys.PAYROLL_PRODUCTS_RATES_EDIT];
+  const canCreate = userPermissionObject?.[PermissionKeys.PAYROLL_PRODUCTS_RATES_CREATE];
+
   return (
     <Box sx={{ p: 3, bgcolor: isDarkMode ? "transparent" : "#f8f9fa", minHeight: "100vh" }}>
       {/* Page Header */}
@@ -150,19 +176,20 @@ export default function ProductsAndRates() {
                     <TableCell>RATE ABOVE</TableCell>
                     <TableCell>RATE BELOW</TableCell>
                     <TableCell align="center">STATUS</TableCell>
-                    <TableCell align="center">EDIT</TableCell>
+                    {canEdit && <TableCell align="center">EDIT</TableCell>}
+                    {canDelete && <TableCell align="center">DELETE</TableCell>}
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
+                      <TableCell colSpan={7 + (canEdit ? 1 : 0) + (canDelete ? 1 : 0)} align="center" sx={{ py: 3 }}>
                         <CircularProgress size={24} />
                       </TableCell>
                     </TableRow>
                   ) : products.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} align="center" sx={{ py: 3, color: isDarkMode ? "#94a3b8" : "#64748b" }}>
+                      <TableCell colSpan={7 + (canEdit ? 1 : 0) + (canDelete ? 1 : 0)} align="center" sx={{ py: 3, color: isDarkMode ? "#94a3b8" : "#64748b" }}>
                         No products found. Add a new one!
                       </TableCell>
                     </TableRow>
@@ -190,15 +217,28 @@ export default function ProductsAndRates() {
                             }} 
                           />
                         </TableCell>
-                        <TableCell align="center">
-                          <IconButton 
-                            size="small" 
-                            onClick={() => handleEditClick(row)}
-                            sx={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #e2e8f0", borderRadius: 1.2, p: 0.5, color: isDarkMode ? "#94a3b8" : "#64748b", "&:hover": { bgcolor: isDarkMode ? "#131a30" : "#f1f5f9" } }}
-                          >
-                            <EditIcon sx={{ fontSize: "0.95rem" }} />
-                          </IconButton>
-                        </TableCell>
+                        {canEdit && (
+                          <TableCell align="center">
+                            <IconButton 
+                              size="small" 
+                              onClick={() => handleEditClick(row)}
+                              sx={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #e2e8f0", borderRadius: 1.2, p: 0.5, color: isDarkMode ? "#94a3b8" : "#64748b", "&:hover": { bgcolor: isDarkMode ? "#131a30" : "#f1f5f9" } }}
+                            >
+                              <EditIcon sx={{ fontSize: "0.95rem" }} />
+                            </IconButton>
+                          </TableCell>
+                        )}
+                        {canDelete && (
+                          <TableCell align="center">
+                            <IconButton 
+                              size="small" 
+                              onClick={() => handleDelete(row.id)}
+                              sx={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #e2e8f0", borderRadius: 1.2, p: 0.5, color: isDarkMode ? "#f87171" : "#dc2626", "&:hover": { bgcolor: isDarkMode ? "#131a30" : "#fef2f2" } }}
+                            >
+                              <DeleteIcon sx={{ fontSize: "0.95rem" }} />
+                            </IconButton>
+                          </TableCell>
+                        )}
                       </TableRow>
                     ))
                   )}
@@ -209,6 +249,7 @@ export default function ProductsAndRates() {
         </Grid>
 
         {/* Right Column: Add / Edit Product Form */}
+        {((!editId && canCreate) || (editId && canEdit)) && (
         <Grid item xs={12} lg={4.5}>
           <Paper sx={{ p: 2.5, borderRadius: 2, boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.05)", border: isDarkMode ? "1px solid #2e3b63" : "1px solid #e2e8f0", backgroundColor: isDarkMode ? "#1c2541" : "background.paper" }}>
             <Typography variant="subtitle1" sx={{ color: isDarkMode ? "#cbd5e1" : "#1e293b", fontWeight: 700, mb: 2.5 }}>
@@ -341,6 +382,7 @@ export default function ProductsAndRates() {
             </Box>
           </Paper>
         </Grid>
+        )}
 
       </Grid>
     </Box>

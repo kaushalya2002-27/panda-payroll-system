@@ -46,9 +46,9 @@ function LoginForm() {
 
   const { mutate: loginMutation, isPending } = useMutation({
     mutationFn: login,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["current-user"] });
+    onSuccess: async (data) => {
       localStorage.setItem("token", data?.access_token);
+      await queryClient.invalidateQueries({ queryKey: ["current-user"] });
       enqueueSnackbar("Welcome Back!", { variant: "success" });
       navigate("/home");
     },

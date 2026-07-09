@@ -74,12 +74,6 @@ export const sidebarItems: Array<SidebarItem> = [
     accessKey: PermissionKeys.PAYROLL_ALL_EMPLOYEES_VIEW,
   },
   {
-    title: "Add Employee",
-    href: "/payroll/add-employee",
-    icon: <SubdirectoryArrowRightIcon fontSize="small" />,
-    accessKey: PermissionKeys.PAYROLL_ADD_EMPLOYEE_VIEW,
-  },
-  {
     title: "Time Cards ",
     href: "/payroll/time-cards",
     icon: <SubdirectoryArrowRightIcon fontSize="small" />,
@@ -113,6 +107,6 @@ export const sidebarItems: Array<SidebarItem> = [
     title: "Departments & Positions",
     href: "/payroll/departments",
     icon: <SubdirectoryArrowRightIcon fontSize="small" />,
-    accessKey: PermissionKeys.PAYROLL_DEPARTMENTS_POSITIONS_VIEW,
+    accessKey: PermissionKeys.PAYROLL_DEPARTMENTS_VIEW,
   },
 ];

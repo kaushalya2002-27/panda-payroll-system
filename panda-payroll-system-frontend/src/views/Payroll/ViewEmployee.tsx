@@ -22,6 +22,8 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PersonIcon from "@mui/icons-material/Person";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
+import useCurrentUser from "../../hooks/useCurrentUser";
+import { PermissionKeys } from "../Administration/SectionList";
 
 const API_BASE_URL = "http://localhost:8000/api/payroll";
 
@@ -52,7 +54,9 @@ export default function ViewEmployee() {
   const { id } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
-  const isDarkMode = theme.palette.mode === "dark"; 
+  const isDarkMode = theme.palette.mode === "dark";
+  const { user } = useCurrentUser();
+  const userPermissionObject = user?.permissionObject;
 
   const [emp, setEmp] = useState<EmployeeDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -106,38 +110,42 @@ export default function ViewEmployee() {
         </Button>
 
         <Box sx={{ display: "flex", gap: 1.5 }}>
-          <Button
-            variant="outlined"
-            startIcon={<AccessTimeIcon />}
-            onClick={() => {
-              const currentYear = new Date().getFullYear();
-              const currentMonth = new Date().toLocaleDateString("en-US", { month: "long" });
-              navigate(`/payroll/time-cards?emp=${emp.id}&year=${currentYear}&month=${currentMonth}`);
-            }}
-            sx={{
-              textTransform: "none",
-              borderRadius: 1.5,
-              color: isDarkMode ? "#90caf9" : "#1a73e8",
-              borderColor: isDarkMode ? "#90caf9" : "#1a73e8",
-              "&:hover": { borderColor: isDarkMode ? "#64b5f6" : "#1557b0", bgcolor: isDarkMode ? "rgba(144, 202, 249, 0.08)" : "#f1f7fe" }
-            }}
-          >
-            Time Card
-          </Button>
-          <Button
-            variant="contained"
-            startIcon={<EditIcon />}
-            onClick={() => navigate(`/payroll/employees/${emp.id}/edit`)}
-            sx={{ 
-              textTransform: "none", 
-              borderRadius: 1.5, 
-              bgcolor: isDarkMode ? "#004494" : "#0056b3", 
-              "&:hover": { bgcolor: "#003566" } 
-            }}
-          >
-            Edit Profile
-          </Button>
-        </Box>
+      {userPermissionObject?.[PermissionKeys.PAYROLL_TIME_CARDS_VIEW] && (
+        <Button
+          variant="outlined"
+          startIcon={<AccessTimeIcon />}
+          onClick={() => {
+            const currentYear = new Date().getFullYear();
+            const currentMonth = new Date().toLocaleDateString("en-US", { month: "long" });
+            navigate(`/payroll/time-cards?emp=${emp.id}&year=${currentYear}&month=${currentMonth}`);
+          }}
+          sx={{
+            textTransform: "none",
+            borderRadius: 1.5,
+            color: isDarkMode ? "#90caf9" : "#1a73e8",
+            borderColor: isDarkMode ? "#90caf9" : "#1a73e8",
+            "&:hover": { borderColor: isDarkMode ? "#64b5f6" : "#1557b0", bgcolor: isDarkMode ? "rgba(144, 202, 249, 0.08)" : "#f1f7fe" }
+          }}
+        >
+          Time Card
+        </Button>
+      )}
+      {userPermissionObject?.[PermissionKeys.PAYROLL_ALL_EMPLOYEES_EDIT] && (
+        <Button
+          variant="contained"
+          startIcon={<EditIcon />}
+          onClick={() => navigate(`/payroll/employees/${emp.id}/edit`)}
+          sx={{ 
+            textTransform: "none", 
+            borderRadius: 1.5, 
+            bgcolor: isDarkMode ? "#004494" : "#0056b3", 
+            "&:hover": { bgcolor: "#003566" } 
+          }}
+        >
+          Edit Profile
+        </Button>
+      )}
+    </Box>
       </Box>
 
       {/* Main Profile Grid Container */}

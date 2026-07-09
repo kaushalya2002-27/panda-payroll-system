@@ -32,6 +32,10 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
+// Permission imports (added)
+import useCurrentUser from "../../hooks/useCurrentUser";
+import { PermissionKeys } from "../Administration/SectionList";
+
 const API_BASE_URL = "http://localhost:8000/api/payroll";
 
 interface Employee {
@@ -57,6 +61,8 @@ export default function AllEmployees() {
   const navigate = useNavigate();
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark"; 
+  const { user } = useCurrentUser();
+  const userPermissionObject = user?.permissionObject;
 
   // Dynamic States
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -218,15 +224,18 @@ export default function AllEmployees() {
             >
               Clear
             </Button>
-            <Button
-              variant="contained"
-              size="medium"
-              startIcon={<AddIcon />}
-              onClick={() => navigate("/payroll/add-employee")}
-              sx={{ bgcolor: isDarkMode ? "#004494" : "#0056b3", "&:hover": { bgcolor: "#003566" }, textTransform: "none", borderRadius: 1.5 }}
-            >
-              Add
-            </Button>
+            {/* Add Button (permission gated) */}
+            {userPermissionObject?.[PermissionKeys.PAYROLL_ALL_EMPLOYEES_CREATE] && (
+                <Button
+                  variant="contained"
+                  size="medium"
+                  startIcon={<AddIcon />}
+                  onClick={() => navigate("/payroll/add-employee")}
+                  sx={{ bgcolor: isDarkMode ? "#004494" : "#0056b3", "&:hover": { bgcolor: "#003566" }, textTransform: "none", borderRadius: 1.5 }}
+                >
+                  Add
+                </Button>
+              )}
           </Grid>
         </Grid>
       </Paper>
@@ -333,29 +342,33 @@ export default function AllEmployees() {
                         <VisibilityIcon fontSize="small" />
                       </IconButton>
 
-                      {/* Edit Button  */}
-                      <IconButton 
-                        size="small" 
-                        title="Edit" 
-                        onClick={() => navigate(`/payroll/employees/${row.id}/edit`)}
-                        sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary", opacity: 0.8, "&:hover": { color: isDarkMode ? "#ffffff" : "initial" } }}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
+                      {/* Edit Button (permission gated) */}
+                      {userPermissionObject?.[PermissionKeys.PAYROLL_ALL_EMPLOYEES_EDIT] && (
+                        <IconButton 
+                          size="small" 
+                          title="Edit" 
+                          onClick={() => navigate(`/payroll/employees/${row.id}/edit`)}
+                          sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary", opacity: 0.8, "&:hover": { color: isDarkMode ? "#ffffff" : "initial" } }}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                      )}
 
-                      {/* Time Card Button */}
-                      <IconButton 
-                        size="small" 
-                        title="Time Card" 
-                        onClick={() => {
-                          const currentYear = new Date().getFullYear();
-                          const currentMonth = new Date().toLocaleDateString("en-US", { month: "long" }); 
-                          navigate(`/payroll/time-cards?emp=${row.id}&year=${currentYear}&month=${currentMonth}`);
-                        }}
-                        sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary", opacity: 0.8, "&:hover": { color: isDarkMode ? "#ffffff" : "initial" } }}
-                      >
-                        <AccessTimeIcon fontSize="small" />
-                      </IconButton>
+                      {/* Time Card Button (permission gated - uses Time Cards' own VIEW key) */}
+                      {userPermissionObject?.[PermissionKeys.PAYROLL_TIME_CARDS_VIEW] && (
+                        <IconButton 
+                          size="small" 
+                          title="Time Card" 
+                          onClick={() => {
+                            const currentYear = new Date().getFullYear();
+                            const currentMonth = new Date().toLocaleDateString("en-US", { month: "long" }); 
+                            navigate(`/payroll/time-cards?emp=${row.id}&year=${currentYear}&month=${currentMonth}`);
+                          }}
+                          sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary", opacity: 0.8, "&:hover": { color: isDarkMode ? "#ffffff" : "initial" } }}
+                        >
+                          <AccessTimeIcon fontSize="small" />
+                        </IconButton>
+                      )}
                     </Box>
                   </TableCell>
                 </TableRow>

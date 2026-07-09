@@ -31,11 +31,12 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import GridOnIcon from "@mui/icons-material/GridOn";
 import EditIcon from "@mui/icons-material/Edit";
+import useCurrentUser from "../../hooks/useCurrentUser";
+import { PermissionKeys } from "../Administration/SectionList";
 
 const API_BASE_URL = "http://localhost:8000/api";
 
 // Month names in order, used to work out the current month's label
-// (e.g. index 6 -> "July") so the page defaults to "today's" month.
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
@@ -44,7 +45,12 @@ const MONTH_NAMES = [
 export default function MonthlySummary() {
   const navigate = useNavigate();
   const theme = useTheme();
-  const isDarkMode = theme.palette.mode === "dark"; 
+  const isDarkMode = theme.palette.mode === "dark";
+  const { user } = useCurrentUser();
+  const userPermissionObject = user?.permissionObject;
+  const canViewPaySlips = userPermissionObject?.[PermissionKeys.PAYROLL_PAY_SLIPS_VIEW];
+  const canViewDetailSheets = userPermissionObject?.[PermissionKeys.PAYROLL_DETAIL_SHEETS_VIEW];
+  const canViewTimeCards = userPermissionObject?.[PermissionKeys.PAYROLL_TIME_CARDS_VIEW];
 
   // Default to the current real-world year/month, so the page opens
   // already pointed at "this month" instead of a hardcoded date.
@@ -304,6 +310,7 @@ export default function MonthlySummary() {
         <Typography variant="subtitle1" sx={{ fontWeight: 700, color: isDarkMode ? "#90caf9" : "#2c3e50" }}>
           {month} {year} – All Employees
         </Typography>
+        {canViewDetailSheets && (
         <Button
           variant="outlined"
           size="small"
@@ -314,6 +321,7 @@ export default function MonthlySummary() {
         >
           {exporting ? "Exporting Daily Sheets..." : "Export All Detail Sheets"}
         </Button>
+      )}
       </Box>
 
       {/* Main Payroll Summary Table */}
@@ -396,18 +404,24 @@ export default function MonthlySummary() {
                     />
                   </TableCell>
                   <TableCell align="center">
-                    <Box sx={{ display: "flex", justifyContent: "center", gap: 0.5 }}>
-                      <IconButton size="small" onClick={() => handleGoToPaySlip(row.employee?.id)} title="View Pay Slip">
-                        <ReceiptLongIcon fontSize="small" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary" }} />
-                      </IconButton>
-                      <IconButton size="small" onClick={() => handleGoToDetailSheet(row.employee?.id)} title="View Detail Sheet">
-                        <GridOnIcon fontSize="small" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary" }} />
-                      </IconButton>
-                      <IconButton size="small" onClick={() => handleEditTimecard(row.employee?.id)} title="Edit Timecards">
-                        <EditIcon fontSize="small" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary" }} />
-                      </IconButton>
-                    </Box>
-                  </TableCell>
+                      <Box sx={{ display: "flex", justifyContent: "center", gap: 0.5 }}>
+                        {canViewPaySlips && (
+                          <IconButton size="small" onClick={() => handleGoToPaySlip(row.employee?.id)} title="View Pay Slip">
+                            <ReceiptLongIcon fontSize="small" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary" }} />
+                          </IconButton>
+                        )}
+                        {canViewDetailSheets && (
+                          <IconButton size="small" onClick={() => handleGoToDetailSheet(row.employee?.id)} title="View Detail Sheet">
+                            <GridOnIcon fontSize="small" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary" }} />
+                          </IconButton>
+                        )}
+                        {canViewTimeCards && (
+                          <IconButton size="small" onClick={() => handleEditTimecard(row.employee?.id)} title="Edit Timecards">
+                            <EditIcon fontSize="small" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary" }} />
+                          </IconButton>
+                        )}
+                      </Box>
+                    </TableCell>
                 </TableRow>
               ))
             ) : (

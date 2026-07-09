@@ -122,6 +122,7 @@ function a11yProps3(indexTwo: number) {
 }
 
 function ChemicalDashboard() {
+  const theme = useTheme();
   const { isMobile, isTablet } = useIsMobile();
   const {
     register,
