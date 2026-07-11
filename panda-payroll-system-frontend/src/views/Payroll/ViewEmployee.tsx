@@ -25,7 +25,7 @@ import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import { PermissionKeys } from "../Administration/SectionList";
 
-const API_BASE_URL = "http://localhost:8000/api/payroll";
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/payroll`;
 
 interface EmployeeDetails {
   id: number;
@@ -163,7 +163,7 @@ export default function ViewEmployee() {
           }}>
             <Box sx={{ position: "relative", display: "inline-block", mb: 2 }}>
               <Avatar
-                src={emp.photo ? `http://localhost:8000/uploads/employees/${emp.photo}` : undefined}
+                src={emp.photo ? `${import.meta.env.VITE_API_BASE_URL}/uploads/employees/${emp.photo}` : undefined}
                 sx={{ 
                   width: 110, 
                   height: 110, 

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import leftLandingLeave from "../../assets/b_leaf_l.svg";
 import rightLandingLeave from "../../assets/b_leaf_r.svg";
@@ -18,12 +19,14 @@ function RegistrationPage() {
 
   const { user, status } = useCurrentUser();
 
-  if (status === "loading" || status === "idle" || status === "pending") {
-    return <PageLoader />;
-  }
+  useEffect(() => {
+    if (user) {
+      navigate("/home");
+    }
+  }, [user, navigate]);
 
-  if (user) {
-    navigate("/home");
+  if (user || status === "loading" || status === "idle" || status === "pending") {
+    return <PageLoader />;
   }
 
   return (

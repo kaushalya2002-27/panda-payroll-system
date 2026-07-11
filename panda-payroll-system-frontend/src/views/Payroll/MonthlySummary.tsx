@@ -34,7 +34,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import { PermissionKeys } from "../Administration/SectionList";
 
-const API_BASE_URL = "http://localhost:8000/api";
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 // Month names in order, used to work out the current month's label
 const MONTH_NAMES = [
@@ -242,7 +242,14 @@ export default function MonthlySummary() {
   return (
     <Box sx={{ p: 1 }}>
       {/* Page Title */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+      <Box sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: { xs: "flex-start", sm: "center" },
+        flexDirection: { xs: "column", sm: "row" },
+        gap: { xs: 0.5, sm: 0 },
+        mb: 3
+      }}>
         <Typography variant="h5" sx={{ color: isDarkMode ? "#90caf9" : "#024271", fontWeight: 600 }}>
           Monthly Payroll Summary
         </Typography>
@@ -270,7 +277,7 @@ export default function MonthlySummary() {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ display: "flex", gap: 1, mt: 2.5 }}>
+          <Grid item xs={12} sm={6} sx={{ display: "flex", gap: 1, mt: { xs: 1, sm: 2.5 }, flexWrap: "wrap" }}>
             <Button
               variant="contained"
               startIcon={loading ? <CircularProgress size={18} color="inherit" /> : <PlayArrowIcon />}
@@ -306,7 +313,14 @@ export default function MonthlySummary() {
       </Grid>
 
       {/* Table Header Section */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5 }}>
+      <Box sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: { xs: "flex-start", sm: "center" },
+        flexDirection: { xs: "column", sm: "row" },
+        gap: { xs: 1, sm: 0 },
+        mb: 1.5
+      }}>
         <Typography variant="subtitle1" sx={{ fontWeight: 700, color: isDarkMode ? "#90caf9" : "#2c3e50" }}>
           {month} {year} – All Employees
         </Typography>
@@ -325,7 +339,7 @@ export default function MonthlySummary() {
       </Box>
 
       {/* Main Payroll Summary Table */}
-      <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: 1, position: "relative", backgroundColor: isDarkMode ? "#1c2541" : "background.paper", border: isDarkMode ? "1px solid #2e3b63" : "none" }}>
+      <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: 1, position: "relative", backgroundColor: isDarkMode ? "#1c2541" : "background.paper", border: isDarkMode ? "1px solid #2e3b63" : "none", overflowX: "auto" }}>
         {loading && (
           <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", position: "absolute", top: 0, left: 0, width: "100%", height: "100%", bgcolor: isDarkMode ? "rgba(28,37,65,0.8)" : "rgba(255,255,255,0.7)", zIndex: 2 }}>
             <CircularProgress />

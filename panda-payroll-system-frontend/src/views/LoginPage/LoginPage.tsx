@@ -17,7 +17,7 @@ function LoginPage() {
   const isMdUp = useMediaQuery(theme.breakpoints.up(990));
   const navigate = useNavigate();
 
-  const { user, status } = useCurrentUser();
+  const { user, status, isRefetching } = useCurrentUser();
 
   useEffect(() => {
     if (user) {
@@ -25,7 +25,11 @@ function LoginPage() {
     }
   }, [user, navigate]);
 
-  if (status === "loading" || status === "idle" || status === "pending") {
+  if (
+    user ||
+    ((status === "loading" || status === "idle" || status === "pending") &&
+      !isRefetching)
+  ) {
     return <PageLoader />;
   }
 
@@ -47,6 +51,8 @@ function LoginPage() {
             flex: isMdUp ? 3 : 1,
             backgroundColor: isDarkMode ? theme.palette.background.default : "#f2f2f2",
             height: isMdUp ? "100vh" : "auto",
+            maxHeight: isMdUp ? "none" : "55vh",
+            overflowY: isMdUp ? "unset" : "auto",
             justifyContent: "center",
             alignItems: "center",
           }}
@@ -105,16 +111,26 @@ function LoginPage() {
       <img
         src={leftLandingLeave}
         alt="Logo"
-        width={150}
-        height={150}
-        style={{ position: "absolute", left: 0, bottom: -5, zIndex: 10 }}
+        style={{
+          position: "absolute",
+          left: 0,
+          bottom: -5,
+          zIndex: 10,
+          width: isMdUp ? 150 : 80,
+          height: isMdUp ? 150 : 80,
+        }}
       />
       <img
         src={rightLandingLeave}
         alt="Logo"
-        width={150}
-        height={150}
-        style={{ position: "absolute", right: 0, bottom: -20, zIndex: 10 }}
+        style={{
+          position: "absolute",
+          right: 0,
+          bottom: -20,
+          zIndex: 10,
+          width: isMdUp ? 150 : 80,
+          height: isMdUp ? 150 : 80,
+        }}
       />
     </Stack>
   );

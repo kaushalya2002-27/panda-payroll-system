@@ -30,7 +30,7 @@ import { useTheme } from "@mui/material/styles";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import { PermissionKeys } from "../Administration/SectionList";
 
-const API_BASE_URL = "http://127.0.0.1:8000/api";
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 export default function ProductsAndRates() {
   const theme = useTheme(); 

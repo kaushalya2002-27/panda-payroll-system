@@ -63,7 +63,7 @@ export default function DetailSheets() {
   const fetchReportData = async (empId: number, selectedYear: string, selectedMonth: number) => {
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8000/api/timecard/detail-sheet", {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/timecard/detail-sheet`, {
         employee_id: empId,
         year: parseInt(selectedYear),
         month: selectedMonth
@@ -84,7 +84,7 @@ export default function DetailSheets() {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:8000/api/timecard/employees")
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/timecard/employees`)
       .then(res => {
         if (res.data.success && res.data.employees.length > 0) {
           setEmployees(res.data.employees); 

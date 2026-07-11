@@ -220,7 +220,7 @@ export function DrawerUpdateButtons({
           deleteFunc={async () => {
             localStorage.removeItem("token");
             queryClient.clear();
-            navigate("/");
+            window.location.href = "/";
           }}
           onSuccess={() => {
             setLogoutDialogOpen(false);

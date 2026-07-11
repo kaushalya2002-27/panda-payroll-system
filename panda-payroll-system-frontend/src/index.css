@@ -180,3 +180,25 @@
 .scrollable-div {
   -ms-overflow-style: scrollbar; /* Force visible scrollbar in IE */
 }
+
+/* ─── Responsive Utilities ─────────────────────────────── */
+
+/* Wrap any wide table in this to get horizontal scroll on small screens */
+.responsive-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* smooth scroll on iOS */
+}
+
+/* Ensure images never burst out of their container */
+img {
+  max-width: 100%;
+}
+
+/* On very small phones, reduce default body/root padding */
+@media (max-width: 480px) {
+  body {
+    font-size: 0.92rem;
+  }
+}
+

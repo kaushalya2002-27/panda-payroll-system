@@ -76,16 +76,17 @@ const ProtectedRoute = () => {
   }
 
   if (!user) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;
 };
 
 const AppRoutes = () => {
-  const { data: user, status } = useQuery<User>({
+  const { data: user } = useQuery<User>({
     queryKey: ["current-user"],
     queryFn: validateUser,
+    retry: false,
   });
 
   const userPermissionObject = useMemo(() => {
@@ -93,11 +94,6 @@ const AppRoutes = () => {
       return user?.permissionObject;
     }
   }, [user]);
-
-  if (status === "pending") {
-  return <PageLoader />;
-
-  }
 
   return (
     <Routes>

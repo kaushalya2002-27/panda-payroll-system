@@ -13,7 +13,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import { PermissionKeys } from "../Administration/SectionList";
 
-const API = "http://localhost:8000/api";
+const API = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 interface EmployeeType { id: number; emp_code: string; full_name: string; }
 interface ProductType { id: number; product_name: string; target_weekday: number; target_saturday: number; rate_below: number; rate_above: number; }
@@ -355,7 +355,14 @@ export default function TimeCards() {
 
   return (
     <Box sx={{ p: 1 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+      <Box sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: { xs: "flex-start", sm: "center" },
+        flexDirection: { xs: "column", sm: "row" },
+        gap: { xs: 0.5, sm: 0 },
+        mb: 3
+      }}>
         <Typography variant="h5" sx={{ color: isDarkMode ? "#90caf9" : "#024271", fontWeight: 600 }}>
           Time Cards Management
         </Typography>
@@ -382,7 +389,7 @@ export default function TimeCards() {
               {MONTHS.map(m => <MenuItem key={m.value} value={m.value}>{m.label}</MenuItem>)}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={4} sx={{ display: "flex", gap: 1 }}>
+          <Grid item xs={12} sm={4} sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
             <Button variant="contained" startIcon={<PlayArrowIcon />} onClick={handleLoadButton}
               disabled={loading || !selectedEmployee}
               sx={{ bgcolor: "#1976d2", "&:hover": { bgcolor: "#1565c0" }, textTransform: "none" }}>

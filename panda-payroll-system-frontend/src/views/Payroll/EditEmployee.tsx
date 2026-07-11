@@ -20,7 +20,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 
-const API_BASE_URL = "http://localhost:8000/api/payroll";
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/payroll`;
 
 interface Department {
   id: number;
@@ -128,7 +128,7 @@ export default function EditEmployee() {
         });
 
         if (emp.photo) {
-          setImagePreview(`http://localhost:8000/uploads/employees/${emp.photo}`);
+          setImagePreview(`${import.meta.env.VITE_API_BASE_URL}/uploads/employees/${emp.photo}`);
         }
       } catch (error) {
         console.error("Error loading employee data for editing:", error);
@@ -311,7 +311,7 @@ export default function EditEmployee() {
         setSuccessMsg("Employee details updated successfully!");
         
         if (response.data.photo) {
-          setImagePreview(`http://localhost:8000/uploads/employees/${response.data.photo}`);
+          setImagePreview(`${import.meta.env.VITE_API_BASE_URL}/uploads/employees/${response.data.photo}`);
         }
 
         setTimeout(() => {
@@ -351,7 +351,14 @@ export default function EditEmployee() {
   return (
     <Box component="form" onSubmit={handleUpdate} noValidate sx={{ p: 1 }}>
       {/* Page Header */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
+      <Box sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: { xs: "flex-start", sm: "center" },
+        flexDirection: { xs: "column", sm: "row" },
+        gap: { xs: 0.5, sm: 0 },
+        mb: 4
+      }}>
         <Typography variant="h5" sx={{ color: isDarkMode ? "#ffffff" : "#024271", fontWeight: 700 }}>
           Edit Employee: <span style={{ color: isDarkMode ? "#94a3b8" : "#64748b", fontWeight: 500 }}>{formData.fullName}</span>
         </Typography>
@@ -656,7 +663,7 @@ export default function EditEmployee() {
             </Paper>
 
             {/* Actions Buttons */}
-            <Box sx={{ display: "flex", gap: 2, mt: 1, mb: 4 }}>
+            <Box sx={{ display: "flex", gap: 2, mt: 1, mb: 4, flexDirection: { xs: "column", sm: "row" } }}>
               <Button
                 type="submit"
                 variant="contained"

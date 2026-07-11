@@ -201,8 +201,8 @@ export default function MainLayout({ children }: Props) {
                   <img
                     src={logoUrl}
                     alt="logo"
-                    height={"65px"}
                     style={{
+                      height: isMobile ? "40px" : "65px",
                       marginTop: "0px",
                       objectFit: "contain",
                       filter: isDarkMode ? "brightness(0) invert(1)" : "none",
@@ -337,9 +337,10 @@ export default function MainLayout({ children }: Props) {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: { xs: 1, sm: 2, md: 3 },
           backgroundColor: theme.palette.background.default,
           minHeight: "100vh",
+          overflowX: "hidden",
         }}
       >
         <DrawerHeader />
@@ -487,7 +488,7 @@ const DrawerContent = ({
           deleteFunc={async () => {
             localStorage.removeItem("token");
             queryClient.clear();
-            navigate("/");
+            window.location.href = "/";
           }}
           onSuccess={() => {
             setLogoutDialogOpen(false);

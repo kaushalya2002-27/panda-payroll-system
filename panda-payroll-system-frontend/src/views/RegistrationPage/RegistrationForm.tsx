@@ -48,12 +48,12 @@ function RegistrationForm() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/payroll/departments")
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/payroll/departments`)
       .then((res) => setDepartments(res.data))
       .catch((err) => console.error("Error fetching departments:", err));
 
     axios
-      .get("http://localhost:8000/api/payroll/job-positions")
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/payroll/job-positions`)
       .then((res) => setJobPositions(res.data))
       .catch((err) => console.error("Error fetching job positions:", err));
   }, []);

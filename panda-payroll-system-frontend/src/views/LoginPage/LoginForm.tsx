@@ -48,7 +48,7 @@ function LoginForm() {
     mutationFn: login,
     onSuccess: async (data) => {
       localStorage.setItem("token", data?.access_token);
-      await queryClient.invalidateQueries({ queryKey: ["current-user"] });
+      await queryClient.refetchQueries({ queryKey: ["current-user"] });
       enqueueSnackbar("Welcome Back!", { variant: "success" });
       navigate("/home");
     },
@@ -69,12 +69,12 @@ function LoginForm() {
       sx={{
         height: isMdUp ? "100vh" : "auto",
         justifyContent: "center",
-        margin: "2.5rem",
-        marginBottom: isMdUp ? "2.5rem" : "22vh",
+        margin: { xs: "1.5rem", sm: "2.5rem" },
+        marginBottom: isMdUp ? "2.5rem" : "2rem",
       }}
     >
       <Box>
-        
+
         <img src={dioLogo} alt="DIO Logo" height={"110px"} />
       </Box>
       <Box>

@@ -74,7 +74,7 @@ export default function Departments() {
 
   const fetchDepartments = () => {
     axios
-      .get("http://localhost:8000/api/payroll/departments")
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/payroll/departments`)
       .then((res) => {
         const formattedData = res.data.map((dept: any) => ({
           ...dept,
@@ -87,7 +87,7 @@ export default function Departments() {
 
   const fetchJobPositions = () => {
     axios
-      .get("http://localhost:8000/api/payroll/job-positions")
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/payroll/job-positions`)
       .then((res) => {
         setJobPositions(res.data);
       })
@@ -113,7 +113,7 @@ export default function Departments() {
 
     if (editId) {
       axios
-        .put(`http://localhost:8000/api/payroll/departments/${editId}`, payload)
+        .put(`${import.meta.env.VITE_API_BASE_URL}/api/payroll/departments/${editId}`, payload)
         .then(() => {
           fetchDepartments();
           handleClear();
@@ -121,7 +121,7 @@ export default function Departments() {
         .catch((err) => console.error("Error updating department:", err));
     } else {
       axios
-        .post("http://localhost:8000/api/payroll/departments", payload)
+        .post(`${import.meta.env.VITE_API_BASE_URL}/api/payroll/departments`, payload)
         .then(() => {
           fetchDepartments();
           handleClear();
@@ -140,7 +140,7 @@ export default function Departments() {
     if (!canDeleteDept) return;
     if (window.confirm("Are you sure you want to delete this department?")) {
       axios
-        .delete(`http://localhost:8000/api/payroll/departments/${id}`)
+        .delete(`${import.meta.env.VITE_API_BASE_URL}/api/payroll/departments/${id}`)
         .then(() => {
           fetchDepartments();
         })
@@ -167,7 +167,7 @@ export default function Departments() {
 
     if (editPositionId) {
       axios
-        .put(`http://localhost:8000/api/payroll/job-positions/${editPositionId}`, payload)
+        .put(`${import.meta.env.VITE_API_BASE_URL}/api/payroll/job-positions/${editPositionId}`, payload)
         .then(() => {
           fetchJobPositions();
           handleClearPosition();
@@ -175,7 +175,7 @@ export default function Departments() {
         .catch((err) => console.error("Error updating job position:", err));
     } else {
       axios
-        .post("http://localhost:8000/api/payroll/job-positions", payload)
+        .post(`${import.meta.env.VITE_API_BASE_URL}/api/payroll/job-positions`, payload)
         .then(() => {
           fetchJobPositions();
           handleClearPosition();
@@ -194,7 +194,7 @@ export default function Departments() {
     if (!canDeletePos) return;
     if (window.confirm("Are you sure you want to delete this job position?")) {
       axios
-        .delete(`http://localhost:8000/api/payroll/job-positions/${id}`)
+        .delete(`${import.meta.env.VITE_API_BASE_URL}/api/payroll/job-positions/${id}`)
         .then(() => {
           fetchJobPositions();
         })

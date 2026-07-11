@@ -36,8 +36,6 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import { PermissionKeys } from "../Administration/SectionList";
 
-const API_BASE_URL = "http://localhost:8000/api/payroll";
-
 interface Employee {
   id: number;
   emp_code: string;
@@ -82,7 +80,7 @@ export default function AllEmployees() {
       if (departmentId !== "all") params.dept = departmentId;
       if (status !== "all") params.status = status;
 
-      const response = await axios.get(`${API_BASE_URL}/employees`, { params });
+      const response = await axios.get(`/api/payroll/employees`, { params });
       setEmployees(response.data);
     } catch (error) {
       console.error("Error fetching employees data:", error);
@@ -93,7 +91,7 @@ export default function AllEmployees() {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/departments`);
+      const response = await axios.get(`/api/payroll/departments`);
       setDepartments(response.data);
     } catch (error) {
       setDepartments([
@@ -118,14 +116,21 @@ export default function AllEmployees() {
     setDepartmentId("all");
     setStatus("active");
     
-    axios.get(`${API_BASE_URL}/employees`, { params: { status: "active" } })
+    axios.get(`/api/payroll/employees`, { params: { status: "active" } })
       .then(res => setEmployees(res.data));
   };
 
   return (
     <Box sx={{ p: 1 }}>
       {/* Page Header */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+      <Box sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: { xs: "flex-start", sm: "center" },
+        flexDirection: { xs: "column", sm: "row" },
+        gap: { xs: 0.5, sm: 0 },
+        mb: 3
+      }}>
         <Typography variant="h5" sx={{ color: isDarkMode ? "#90caf9" : "#0056b3", fontWeight: 700 }}>
           Employees
         </Typography>
@@ -199,7 +204,7 @@ export default function AllEmployees() {
           </Grid>
 
           {/* Action Buttons */}
-          <Grid item xs={12} md={3.5} sx={{ display: "flex", gap: 1, mt: 2.5 }}>
+          <Grid item xs={12} md={3.5} sx={{ display: "flex", gap: 1, mt: { xs: 1, md: 2.5 }, flexWrap: "wrap" }}>
             <Button
               variant="contained"
               size="medium"
@@ -252,7 +257,8 @@ export default function AllEmployees() {
         boxShadow: "0px 2px 8px rgba(0,0,0,0.05)", 
         borderRadius: 2,
         backgroundColor: isDarkMode ? "#1c2541" : "background.paper",
-        border: isDarkMode ? "1px solid #2e3b63" : "none"
+        border: isDarkMode ? "1px solid #2e3b63" : "none",
+        overflowX: "auto",
       }}>
         <Table size="medium">
           <TableHead sx={{ bgcolor: isDarkMode ? "#2e3b63" : "#a0c4ff" }}>
@@ -287,7 +293,7 @@ export default function AllEmployees() {
                   <TableCell sx={{ borderBottom: isDarkMode ? "1px solid #2e3b63" : "inherit" }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                       <Avatar 
-                        src={row.photo ? `http://localhost:8000/uploads/employees/${row.photo}` : undefined}
+                        src={row.photo ? `${import.meta.env.VITE_API_BASE_URL?.replace('/api', '')}/uploads/employees/${row.photo}` : undefined}
                         sx={{ width: 32, height: 32, fontSize: "0.85rem", bgcolor: isDarkMode ? "#243056" : "#eef4ff", color: isDarkMode ? "#90caf9" : "#1a73e8", fontWeight: 600 }}
                       >
                         {row.full_name ? row.full_name.substring(0, 2).toUpperCase() : "EM"}

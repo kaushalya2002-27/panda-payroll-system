@@ -47,7 +47,7 @@ export default function PaySlip() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/api/payroll/employees")
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/payroll/employees`)
       .then(res => {
         const empList = res.data.data || res.data;
         setEmployees(empList);
@@ -86,7 +86,7 @@ export default function PaySlip() {
     if (!selectedEmpId) return;
 
     setLoading(true);
-    axios.get(`http://localhost:8000/api/payroll/pay-slip`, {
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/payroll/pay-slip`, {
       params: { employee_id: selectedEmpId, year, month }
     })
     .then(res => {

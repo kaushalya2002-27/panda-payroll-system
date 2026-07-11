@@ -48,7 +48,7 @@ export default function PayrollDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/api/payroll/dashboard")
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/payroll/dashboard`)
       .then((response) => {
         if (response.data.success) {
           setDashboardData(response.data);
@@ -97,7 +97,14 @@ const quickActions = allQuickActions.filter((action) => userPermissionObject?.[a
   return (
     <Box sx={{ p: 1 }}>
       {/* Top Header Row */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+      <Box sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: { xs: "flex-start", sm: "center" },
+        flexDirection: { xs: "column", sm: "row" },
+        gap: { xs: 0.5, sm: 0 },
+        mb: 3
+      }}>
         <Typography variant="h5" sx={{ color: isDarkMode ? "#90caf9" : "#0056b3", fontWeight: 700 }}>
           Dashboard
         </Typography>
@@ -199,7 +206,8 @@ const quickActions = allQuickActions.filter((action) => userPermissionObject?.[a
             boxShadow: "0px 2px 8px rgba(0,0,0,0.05)", 
             borderRadius: 2,
             backgroundColor: isDarkMode ? "#1c2541" : "background.paper",
-            border: isDarkMode ? "1px solid #2e3b63" : "none"
+            border: isDarkMode ? "1px solid #2e3b63" : "none",
+            overflowX: "auto",
           }}>
             <Table size="medium">
               <TableHead sx={{ bgcolor: isDarkMode ? "#2e3b63" : "#a0c4ff" }}>
@@ -216,7 +224,7 @@ const quickActions = allQuickActions.filter((action) => userPermissionObject?.[a
                     <TableCell sx={{ borderBottom: isDarkMode ? "1px solid #2e3b63" : "inherit" }}>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                         <Avatar 
-                          src={row.photo ? `http://localhost:8000/uploads/employees/${row.photo}` : undefined} 
+                          src={row.photo ? `${import.meta.env.VITE_API_BASE_URL}/uploads/employees/${row.photo}` : undefined} 
                           sx={{ width: 32, height: 32, fontSize: "0.85rem", bgcolor: isDarkMode ? "#243056" : "#eef4ff", color: isDarkMode ? "#90caf9" : "#1a73e8", fontWeight: 600 }}
                         >
                           {row.name ? row.name.charAt(0).toUpperCase() : "E"}

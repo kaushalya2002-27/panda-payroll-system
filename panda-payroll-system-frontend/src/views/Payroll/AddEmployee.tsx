@@ -20,7 +20,7 @@ import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
 
-const API_BASE_URL = "http://localhost:8000/api/payroll";
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/payroll`;
 
 interface Department {
   id: number;
@@ -300,7 +300,14 @@ export default function AddEmployee() {
   return (
     <Box component="form" onSubmit={handleSave} noValidate sx={{ p: 1 }}>
       {/* Page Header */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
+      <Box sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: { xs: "flex-start", sm: "center" },
+        flexDirection: { xs: "column", sm: "row" },
+        gap: { xs: 0.5, sm: 0 },
+        mb: 4
+      }}>
         <Typography 
           variant="h5" 
           sx={{ 
@@ -601,7 +608,7 @@ export default function AddEmployee() {
             </Paper>
 
             {/* Buttons */}
-            <Box sx={{ display: "flex", gap: 2, mt: 1, mb: 4 }}>
+            <Box sx={{ display: "flex", gap: 2, mt: 1, mb: 4, flexDirection: { xs: "column", sm: "row" } }}>
               <Button
                 type="submit"
                 variant="contained"
