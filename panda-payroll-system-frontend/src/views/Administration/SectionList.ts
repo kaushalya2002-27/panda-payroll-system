@@ -69,7 +69,7 @@ export const PermissionSectionsMap: PermissionSection[] = [
         key: "PAYROLL_TIME_CARDS",
         permissionsExists: {
           VIEW: true,
-          CREATE: true,
+          CREATE: false,
           EDIT: true,
           DELETE: false,
         },
@@ -183,7 +183,6 @@ export enum PermissionKeys {
   PAYROLL_ADD_EMPLOYEE_VIEW = "PAYROLL_ADD_EMPLOYEE_VIEW",
   PAYROLL_ADD_EMPLOYEE_CREATE = "PAYROLL_ADD_EMPLOYEE_CREATE",
   PAYROLL_TIME_CARDS_VIEW = "PAYROLL_TIME_CARDS_VIEW",
-  PAYROLL_TIME_CARDS_CREATE = "PAYROLL_TIME_CARDS_CREATE",
   PAYROLL_TIME_CARDS_EDIT = "PAYROLL_TIME_CARDS_EDIT",
   PAYROLL_MONTHLY_SUMMARY_VIEW = "PAYROLL_MONTHLY_SUMMARY_VIEW",
   PAYROLL_PAY_SLIPS_VIEW = "PAYROLL_PAY_SLIPS_VIEW",

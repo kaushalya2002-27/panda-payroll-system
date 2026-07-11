@@ -20,6 +20,10 @@ function LoginPage() {
   const { user, status, isRefetching } = useCurrentUser();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     if (user) {
       navigate("/home");
     }
@@ -51,8 +55,6 @@ function LoginPage() {
             flex: isMdUp ? 3 : 1,
             backgroundColor: isDarkMode ? theme.palette.background.default : "#f2f2f2",
             height: isMdUp ? "100vh" : "auto",
-            maxHeight: isMdUp ? "none" : "55vh",
-            overflowY: isMdUp ? "unset" : "auto",
             justifyContent: "center",
             alignItems: "center",
           }}
@@ -104,33 +106,25 @@ function LoginPage() {
             everyday business tasks simpler, more reliable, and easier to manage.
           </Typography>
         </Stack>
-        <Stack sx={{ flex: isMdUp ? 2 : 1 }}>
+
+        <Stack sx={{ flex: isMdUp ? 2 : 1, paddingBottom: isMdUp ? 0 : "130px" }}>
           <LoginForm />
         </Stack>
       </Stack>
+
       <img
         src={leftLandingLeave}
         alt="Logo"
-        style={{
-          position: "absolute",
-          left: 0,
-          bottom: -5,
-          zIndex: 10,
-          width: isMdUp ? 150 : 80,
-          height: isMdUp ? 150 : 80,
-        }}
+        width={150}
+        height={150}
+        style={{ position: "absolute", left: 0, bottom: -5, zIndex: 10 }}
       />
       <img
         src={rightLandingLeave}
         alt="Logo"
-        style={{
-          position: "absolute",
-          right: 0,
-          bottom: -20,
-          zIndex: 10,
-          width: isMdUp ? 150 : 80,
-          height: isMdUp ? 150 : 80,
-        }}
+        width={150}
+        height={150}
+        style={{ position: "absolute", right: 0, bottom: -20, zIndex: 10 }}
       />
     </Stack>
   );

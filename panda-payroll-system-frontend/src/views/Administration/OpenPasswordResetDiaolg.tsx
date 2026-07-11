@@ -64,13 +64,13 @@ export default function PasswordResetDialog({
   const { mutate: resetUserPasswordMutation, isPending } = useMutation({
     mutationFn: userPasswordReset,
     onSuccess: () => {
-    localStorage.removeItem("token");
-    queryClient.clear();
-    navigate("/");
-    enqueueSnackbar("Password Reset Successfully", {
-      variant: "success",
-    });
-  },
+      localStorage.removeItem("token");
+      queryClient.clear();
+      navigate("/");
+      enqueueSnackbar("Password Reset Successfully", {
+        variant: "success",
+      });
+    },
     onError: (error: any) => {
       enqueueSnackbar(error?.data?.message ?? `User Role Update Failed`, {
         variant: "error",
@@ -104,12 +104,12 @@ export default function PasswordResetDialog({
         }}
       >
         <Typography
-        variant="h6"
-        textAlign={"center"}
-        sx={{ color: isDarkMode ? "#fff" : "inherit" }}
-      >
-        Password Reset For {defaultValues.name}
-      </Typography>
+          variant="h6"
+          textAlign={"center"}
+          sx={{ color: isDarkMode ? "#fff" : "inherit" }}
+        >
+          Password Reset For {defaultValues.name}
+        </Typography>
         <IconButton
           onClick={() => {
             resetForm();
@@ -137,6 +137,10 @@ export default function PasswordResetDialog({
           <TextField
             {...register("newPassword", {
               required: "New password is required",
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters long",
+              },
             })}
             label="New Password"
             type="password"
