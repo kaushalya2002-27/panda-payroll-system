@@ -222,35 +222,6 @@ export async function updateUserType({
 }
 
 //assignee by the responsible section
-export async function fetchHazardRiskAssignee() {
-  const res = await axios.get("/api/hazard-risks-assignee");
-  return res.data;
-}
-
-export async function fetchAccidentAssignee() {
-  const res = await axios.get("/api/accidents-assignee");
-  return res.data;
-}
-
-export async function fetchIncidentAssignee() {
-  const res = await axios.get("/api/incidents-assignee");
-  return res.data;
-}
-
-export async function fetchMedicineRequestAssignee() {
-  const res = await axios.get("/api/medicine-request-assignee");
-  return res.data;
-}
-
-export async function fetchInternalAuditAssignee() {
-  const res = await axios.get("/api/internal-audit-assignee");
-  return res.data;
-}
-
-export async function fetchExternalAuditAssignee() {
-  const res = await axios.get("/api/external-audit-assignee");
-  return res.data;
-}
 
 export async function updateUserProfileImage({ id, imageFile }: { id: number; imageFile: File }) {
   const formData = new FormData();

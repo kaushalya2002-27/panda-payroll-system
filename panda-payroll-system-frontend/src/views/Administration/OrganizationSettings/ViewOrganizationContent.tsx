@@ -46,6 +46,7 @@ function ViewOrganizationContent({
   organizationSettings: Organization;
 }) {
   const [activeTab, setActiveTab] = useState(0);
+  const theme = useTheme();
   const { isTablet } = useIsMobile();
 
   const insightImage = Array.isArray(organizationSettings.insightImage)

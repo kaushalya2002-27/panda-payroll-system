@@ -9,7 +9,6 @@ import Box from "@mui/material/Box";
 export function CircularProgressWithLabel(
   props: CircularProgressProps & { value: number }
 ) {
-  const theme = useTheme();
   return (
     <Box sx={{ position: "relative", display: "inline-flex" }}>
       <Box sx={{ position: "relative" }}>

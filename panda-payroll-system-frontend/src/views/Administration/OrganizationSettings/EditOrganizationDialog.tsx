@@ -50,11 +50,11 @@ interface TabPanelProps {
 }
 
 const EditOrganizationDialog = ({
-  const theme = useTheme();
   open,
   handleClose,
   defaultValues,
 }: Props) => {
+  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const { isMobile } = useIsMobile();
   const [files, setFiles] = useState<File[]>([]);

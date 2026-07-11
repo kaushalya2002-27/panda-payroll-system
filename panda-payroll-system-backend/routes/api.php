@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminControllers\AdminController;
-use App\Http\Controllers\api\CalculationController;
+
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 /*
 | Public Routes (Authentication & Basic Configurations)
 */
-Route::post('calculate', [CalculationController::class, 'store']);
+
 Route::post('register', [RegisteredUserController::class, 'store']);
 Route::post('login', [LoginController::class, 'login']);
 Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);

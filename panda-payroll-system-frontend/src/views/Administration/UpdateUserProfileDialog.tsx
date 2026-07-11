@@ -25,7 +25,7 @@ import {
   User,
 } from "../../api/userApi";
 import queryClient from "../../state/queryClient";
-import { genderOptions } from "../../constants/accidentConstants";
+const genderOptions = ["Male", "Female", "Other"];
 
 type DialogProps = {
   open: boolean;

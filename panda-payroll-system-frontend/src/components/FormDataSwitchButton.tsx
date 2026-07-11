@@ -1,4 +1,4 @@
-import { Box, styled, Switch, SwitchProps, Typography } from "@mui/material";
+import { Box, styled, Switch, SwitchProps, Typography, useTheme } from "@mui/material";
 
 type FormDataSwitchButtonProps = {
   label: string;
@@ -71,13 +71,13 @@ const CustomSwitch = styled((props: SwitchProps) => (
 }));
 
 const FormDataSwitchButton = ({
-  const theme = useTheme();
   value,
   onChange,
   label,
   disabled = false,
   ariaLabel,
 }: FormDataSwitchButtonProps) => {
+  const theme = useTheme();
   const switchId = `switch-${label.replace(/\s+/g, "-").toLowerCase()}`;
 
   return (
