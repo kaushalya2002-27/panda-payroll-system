@@ -199,9 +199,9 @@ export default function PaySlip() {
           <Grid item xs={12} sm={2}>
             <Typography variant="caption" sx={{ fontWeight: 600, color: isDarkMode ? "#94a3b8" : "#475569" }}>Year</Typography>
             <TextField select fullWidth size="small" value={year} onChange={(e) => setYear(e.target.value)} sx={filterInputStyles}>
-              <MenuItem value="2025">2025</MenuItem>
-              <MenuItem value="2026">2026</MenuItem>
-              <MenuItem value="2027">2027</MenuItem>
+              {["2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030"].map(yr => (
+                <MenuItem key={yr} value={yr}>{yr}</MenuItem>
+              ))}
             </TextField>
           </Grid>
           <Grid item xs={12} sm={2}>

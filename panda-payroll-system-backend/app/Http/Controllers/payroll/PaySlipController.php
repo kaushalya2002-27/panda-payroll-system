@@ -33,14 +33,8 @@ class PaySlipController extends Controller
             return response()->json(['success' => false, 'message' => 'Employee not found.'], 404);
         }
 
-        // Fetch Payroll Summary
-        $summary = PayrollSummary::where('employee_id', $employeeId)
-            ->where('payroll_year', $year)
-            ->where(function($query) use ($monthNumber, $formattedMonth) {
-                $query->where('payroll_month', $monthNumber)
-                      ->orWhere('payroll_month', $formattedMonth);
-            })
-            ->first();
+        // Fetch active products with their rates
+        $products = DB::table('payroll_products')->where('status', 'active')->orderBy('sort_order')->get();
 
         $productBreakdown = DB::table('timecard_products')
             ->join('timecards', 'timecard_products.timecard_id', '=', 'timecards.id')
@@ -52,25 +46,106 @@ class PaySlipController extends Controller
             ->groupBy('payroll_products.id', 'payroll_products.product_name')
             ->get();
 
-        // Calculate Days Worked & Leave
+        // Fetch timecards and their product quantities
         $timecards = DB::table('timecards')
             ->where('employee_id', $employeeId)
             ->whereYear('work_date', $year)
             ->whereMonth('work_date', $formattedMonth)
-            ->get();
+            ->get()
+            ->keyBy('work_date');
 
-        $daysWorked = 0;
-        $daysLeave = 0;
-        foreach ($timecards as $card) {
-            $status = strtolower(trim($card->status ?? 'work'));
-            $dayOfWeek = Carbon::parse($card->work_date)->dayOfWeek;
+        $timecardIds = $timecards->pluck('id')->toArray();
 
-            if ($status === 'leave') {
-                $daysLeave++;
-            } elseif (($status === 'work' || $status === 'holiday') && $dayOfWeek !== 0) {
-                $daysWorked++;
+        $productQuantities = [];
+        if (!empty($timecardIds)) {
+            $tpRecords = DB::table('timecard_products')
+                ->whereIn('timecard_id', $timecardIds)
+                ->get();
+
+            foreach ($tpRecords as $tp) {
+                $productQuantities[$tp->timecard_id][$tp->product_id] = $tp->quantity;
             }
         }
+
+        // Calculate everything day-by-day (same logic as DetailSheetController)
+        $daysWorked = 0;
+        $daysLeave = 0;
+        $totalProductionPay = 0;
+        $totalOtAmount = 0;
+        $totalDayDuty = 0;
+        $totalTravelling = 0;
+        $totalOther = 0;
+
+        $daysInMonth = Carbon::createFromDate($year, $monthNumber, 1)->daysInMonth;
+
+        for ($i = 1; $i <= $daysInMonth; $i++) {
+            $currentDateStr = sprintf('%04d-%02d-%02d', $year, $monthNumber, $i);
+            $date = Carbon::createFromDate($year, $monthNumber, $i);
+            $dayOfWeek = $date->dayOfWeek;
+
+            $card = $timecards->get($currentDateStr);
+            $status = $card ? strtolower(trim($card->status ?? 'work')) : 'off';
+
+            if ($card) {
+                if ($status === 'leave') {
+                    $daysLeave++;
+                } elseif (($status === 'work' || $status === 'holiday') && $dayOfWeek !== 0) {
+                    $daysWorked++;
+                }
+            }
+
+            // Calculate production pay from product quantities & rates
+            $dailyProdPay = 0;
+            $maxQty = -1;
+            $topProduct = null;
+
+            foreach ($products as $p) {
+                $qty = 0;
+                if ($card && isset($productQuantities[$card->id][$p->id])) {
+                    $qty = (int)$productQuantities[$card->id][$p->id];
+                }
+                if ($qty > 0) {
+                    if ($qty > $maxQty) {
+                        $maxQty = $qty;
+                        $topProduct = $p;
+                    }
+                }
+            }
+
+            if ($card) {
+                $totalQty = 0;
+                foreach ($products as $p) {
+                    if (isset($productQuantities[$card->id][$p->id])) {
+                        $totalQty += (int)$productQuantities[$card->id][$p->id];
+                    }
+                }
+
+                if ($totalQty > 0 && $topProduct !== null) {
+                    if ($status === 'holiday') {
+                        $dailyProdPay = $totalQty * (float)$topProduct->rate_above;
+                    } else {
+                        $target = ($dayOfWeek === 6) ? (int)$topProduct->target_saturday : (int)$topProduct->target_weekday;
+                        $below = min($totalQty, $target);
+                        $above = max(0, $totalQty - $target);
+                        $dailyProdPay = ($below * (float)$topProduct->rate_below) + ($above * (float)$topProduct->rate_above);
+                    }
+                }
+            }
+
+            $totalProductionPay += $dailyProdPay;
+
+            $otAmount   = $card ? (float)($card->ot_hours ?? 0) : 0;
+            $dayDuty    = $card ? (float)($card->day_duty ?? 0) : 0;
+            $travelling = $card ? (float)($card->travelling ?? 0) : 0;
+            $other      = $card ? (float)($card->other_allowance ?? 0) : 0;
+
+            $totalOtAmount   += $otAmount;
+            $totalDayDuty    += $dayDuty;
+            $totalTravelling += $travelling;
+            $totalOther      += $other;
+        }
+
+        $grossPay = $totalProductionPay + $totalOtAmount + $totalDayDuty + $totalTravelling + $totalOther;
 
         return response()->json([
             'success' => true,
@@ -88,12 +163,12 @@ class PaySlipController extends Controller
             ],
             'products' => $productBreakdown,
             'earnings' => [
-                'production_allowance' => $summary ? (float)$summary->total_production : 0.00,
-                'overtime_allowance'   => $summary ? (float)$summary->total_ot : 0.00,
-                'day_duty_allowance'   => $summary ? (float)$summary->total_day_duty : 0.00,
-                'travelling_allowance' => $summary ? (float)$summary->total_travelling : 0.00,
-                'other_allowances'     => $summary ? (float)$summary->total_other : 0.00,
-                'gross_pay'            => $summary ? (float)$summary->gross_pay : 0.00,
+                'production_allowance' => $totalProductionPay,
+                'overtime_allowance'   => $totalOtAmount,
+                'day_duty_allowance'   => $totalDayDuty,
+                'travelling_allowance' => $totalTravelling,
+                'other_allowances'     => $totalOther,
+                'gross_pay'            => $grossPay,
             ]
         ]);
     }

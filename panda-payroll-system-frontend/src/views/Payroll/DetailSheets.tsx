@@ -42,7 +42,7 @@ const MONTHS = [
   { value: 11, label: "November" }, { value: 12, label: "December" },
 ];
 
-const YEARS = ["2025", "2026", "2027", "2028"];
+const YEARS = ["2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030"];
 
 export default function DetailSheets() {
   const theme = useTheme();
@@ -432,6 +432,11 @@ export default function DetailSheets() {
                     ))}
                     <TableCell>PROD. PAY</TableCell>
                     <TableCell>OT</TableCell>
+                    <TableCell>DAY DUTY</TableCell>
+                    <TableCell>TRAVEL</TableCell>
+                    <TableCell>OTHER</TableCell>
+                    <TableCell>TOTAL</TableCell>
+                    <TableCell>NOTES</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -454,6 +459,11 @@ export default function DetailSheets() {
                         ))}
                         <TableCell align="right" sx={{ fontSize: "0.75rem", fontWeight: 600, pr: 2, color: isDarkMode ? "#cbd5e1" : "inherit", borderBottom: isDarkMode ? "1px solid #2e3b63" : "inherit" }}>{row.production_pay}</TableCell>
                         <TableCell align="center" sx={{ fontSize: "0.75rem", color: isDarkMode ? "#cbd5e1" : "inherit", borderBottom: isDarkMode ? "1px solid #2e3b63" : "inherit" }}>{row.ot_hours}</TableCell>
+                        <TableCell align="center" sx={{ fontSize: "0.75rem", color: isDarkMode ? "#cbd5e1" : "inherit", borderBottom: isDarkMode ? "1px solid #2e3b63" : "inherit" }}>{row.day_duty}</TableCell>
+                        <TableCell align="center" sx={{ fontSize: "0.75rem", color: isDarkMode ? "#cbd5e1" : "inherit", borderBottom: isDarkMode ? "1px solid #2e3b63" : "inherit" }}>{row.travelling}</TableCell>
+                        <TableCell align="center" sx={{ fontSize: "0.75rem", color: isDarkMode ? "#cbd5e1" : "inherit", borderBottom: isDarkMode ? "1px solid #2e3b63" : "inherit" }}>{row.other}</TableCell>
+                        <TableCell align="right" sx={{ fontSize: "0.75rem", fontWeight: 600, pr: 2, color: isDarkMode ? "#cbd5e1" : "inherit", borderBottom: isDarkMode ? "1px solid #2e3b63" : "inherit" }}>{row.total}</TableCell>
+                        <TableCell align="left" sx={{ fontSize: "0.75rem", color: isDarkMode ? "#cbd5e1" : "inherit", borderBottom: isDarkMode ? "1px solid #2e3b63" : "inherit" }}>{row.notes}</TableCell>
                       </TableRow>
                     );
                   })}
@@ -470,6 +480,11 @@ export default function DetailSheets() {
                     })}
                     <TableCell align="right" sx={{ pr: 2 }}>Rs. {summary.total_production}</TableCell>
                     <TableCell align="center">{summary.total_ot !== "0.00" && summary.total_ot !== "-" ? `Rs. ${summary.total_ot}` : "-"}</TableCell>
+                    <TableCell align="center">{summary.total_day_duty !== "0.00" && summary.total_day_duty !== "-" ? `Rs. ${summary.total_day_duty}` : "-"}</TableCell>
+                    <TableCell align="center">{summary.total_travelling !== "0.00" && summary.total_travelling !== "-" ? `Rs. ${summary.total_travelling}` : "-"}</TableCell>
+                    <TableCell align="center">{summary.total_other !== "0.00" && summary.total_other !== "-" ? `Rs. ${summary.total_other}` : "-"}</TableCell>
+                    <TableCell align="right" sx={{ pr: 2 }}>Rs. {summary.gross_pay}</TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 </TableBody>
               </Table>

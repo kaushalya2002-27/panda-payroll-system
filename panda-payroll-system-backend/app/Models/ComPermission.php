@@ -20,7 +20,7 @@ class ComPermission extends Model
 
     public function users()
     {
-        return $this->hasMany(User::class, 'userType', 'userType');
+        return $this->hasMany(User::class, 'userType', 'id');
     }
 
 }

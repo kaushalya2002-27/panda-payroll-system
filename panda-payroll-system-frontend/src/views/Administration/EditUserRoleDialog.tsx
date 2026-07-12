@@ -59,16 +59,23 @@ export default function EditUserRoleDialog({
   });
 
   // Departments come from the Payroll System's "Departments & Positions" data
-  const { data: departmentData } = useQuery({
+  const { data: departmentData, refetch: refetchDepartments } = useQuery({
     queryKey: ["departments"],
     queryFn: fetchDepartmentData,
   });
 
   // Job Positions come from the Payroll System's "Departments & Positions" data
-  const { data: jobPositions } = useQuery({
+  const { data: jobPositions, refetch: refetchJobPositions } = useQuery({
     queryKey: ["jobPositions"],
     queryFn: fetchJobPositionData,
   });
+
+  useEffect(() => {
+    if (open) {
+      refetchDepartments();
+      refetchJobPositions();
+    }
+  }, [open, refetchDepartments, refetchJobPositions]);
 
   const {
     handleSubmit,

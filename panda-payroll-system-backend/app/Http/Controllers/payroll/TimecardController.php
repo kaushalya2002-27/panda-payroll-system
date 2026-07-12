@@ -174,6 +174,7 @@ class TimecardController extends Controller
                     'status'          => $status,
                     'start_time'      => $row['start_time'] ?? '08:00',
                     'end_time'        => $row['end_time'] ?? '17:00',
+                    'production_pay'  => $dailyProductionPay,
                     'ot_hours'        => $otHours,
                     'day_duty'        => $dayDuty,
                     'travelling'      => $travelling,

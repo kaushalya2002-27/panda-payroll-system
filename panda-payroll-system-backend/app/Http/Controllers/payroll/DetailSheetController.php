@@ -139,6 +139,9 @@ class DetailSheetController extends Controller
             $totalTravelling += $travelling;
             $totalOther      += $other;
 
+            $dailyTotal = $dailyProdPay + $otAmount + $dayDuty + $travelling + $other;
+            $notes = $card ? ($card->notes ?? '') : '';
+
             $sheetData[] = [
                 'date' => $date->format('Y-m-d'),
                 'day' => $dayName,
@@ -149,6 +152,8 @@ class DetailSheetController extends Controller
                 'day_duty' => $dayDuty > 0 ? number_format($dayDuty, 2) : '-',
                 'travelling' => $travelling > 0 ? number_format($travelling, 2) : '-',
                 'other' => $other > 0 ? number_format($other, 2) : '-',
+                'total' => $dailyTotal > 0 ? number_format($dailyTotal, 2) : '-',
+                'notes' => $notes,
             ];
         }
 

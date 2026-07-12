@@ -32,9 +32,10 @@ const MONTHS = [
   { value: 9, label: "September" }, { value: 10, label: "October" },
   { value: 11, label: "November" }, { value: 12, label: "December" },
 ];
-const YEARS = ["2023", "2024", "2025", "2026", "2027"];
+const YEARS = ["2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030"];
 
-const getRowBgColor = (day: string, isDarkMode: boolean) => {
+const getRowBgColor = (day: string, isDarkMode: boolean, status?: string) => {
+  if (status === "off") return isDarkMode ? "#1a2236" : "#f5f5f5";
   if (!day) return isDarkMode ? "#1c2541" : "#ffffff";
   const d = day.toString().toLowerCase().trim();
   if (d === "sun" || d === "sunday") return isDarkMode ? "#3e1f25" : "#ffebee";
@@ -226,7 +227,7 @@ export default function TimeCards() {
         delete (rowCopy as any).hours;
         delete (rowCopy as any).other_allowance;
 
-        const isLeave = row.status === "leave";
+        const isLeave = row.status === "leave" || row.status === "off";
 
         const cleanProductQuantities: { [productId: number]: number } = {};
         products.forEach(prod => {
@@ -289,7 +290,7 @@ export default function TimeCards() {
       const rows = [...prev];
       let updatedRow = { ...rows[idx], [field]: value };
 
-      if (field === "status" && value === "leave") {
+      if (field === "status" && (value === "leave" || value === "off")) {
         const resetQuantities = { ...updatedRow.product_quantities };
         Object.keys(resetQuantities).forEach(id => {
           resetQuantities[Number(id)] = 0;
@@ -312,6 +313,7 @@ export default function TimeCards() {
       return rows;
     });
   };
+
 
   const handleQtyChange = (idx: number, productId: number, qty: string) => {
     setDaysData(prev => {
@@ -532,9 +534,10 @@ export default function TimeCards() {
             {daysData.map((row, idx) => {
               const displayProdPay = calcProductionPayRow(row, products);
               const displayGross = calcGross(row, products);
-              const rowBg = getRowBgColor(row.day, isDarkMode);
-              const inputBg = (row.status !== "work") ? (isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.04)") : "transparent";
-              const isLeave = row.status === "leave";
+              const rowBg = getRowBgColor(row.day, isDarkMode, row.status);
+              const isWorkable = row.status === "work" || row.status === "holiday";
+              const inputBg = (!isWorkable) ? (isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.04)") : "transparent";
+              const isLeave = row.status === "leave" || row.status === "off";
               const rowDisabled = isLeave || !canModify;
 
               return (
@@ -572,15 +575,16 @@ export default function TimeCards() {
                       <option value="work">Work</option>
                       <option value="holiday">Holiday</option>
                       <option value="leave">Leave</option>
+                      <option value="off">Off</option>
                     </select>
                   </TableCell>
                   <TableCell align="center">
                     <Box sx={{ display: "flex", gap: 0.5, justifyContent: "center", alignItems: "center" }}>
-                      <input value={row.start_time || ""} disabled={row.status !== "work" || !canModify}
+                      <input value={row.start_time || ""} disabled={!isWorkable || !canModify}
                         onChange={(e) => handleRowChange(idx, "start_time", e.target.value)}
                         style={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #b0bec5", borderRadius: 4, padding: "0 4px", fontSize: "0.8rem", fontWeight: 600, width: 55, height: 32, boxSizing: "border-box", backgroundColor: inputBg, color: isDarkMode ? "#cbd5e1" : theme.palette.text.primary, textAlign: "center", outline: "none", fontFamily: "inherit" }} />
                       <Typography variant="caption" sx={{ fontWeight: 600, color: "text.secondary" }}>-</Typography>
-                      <input value={row.end_time || ""} disabled={row.status !== "work" || !canModify}
+                      <input value={row.end_time || ""} disabled={!isWorkable || !canModify}
                         onChange={(e) => handleRowChange(idx, "end_time", e.target.value)}
                         style={{ border: isDarkMode ? "1px solid #2e3b63" : "1px solid #b0bec5", borderRadius: 4, padding: "0 4px", fontSize: "0.8rem", fontWeight: 600, width: 55, height: 32, boxSizing: "border-box", backgroundColor: inputBg, color: isDarkMode ? "#cbd5e1" : theme.palette.text.primary, textAlign: "center", outline: "none", fontFamily: "inherit" }} />
                     </Box>
@@ -627,6 +631,43 @@ export default function TimeCards() {
                 </TableRow>
               );
             })}
+            
+            {/* Grand Total Row */}
+            <TableRow sx={{ 
+              "& td": { 
+                fontWeight: 700, 
+                color: isDarkMode ? "#90caf9" : "#024271", 
+                bgcolor: isDarkMode ? "#131a30" : "#f8fafc",
+                fontSize: "0.8rem",
+                borderTop: isDarkMode ? "2px solid #2e3b63" : "2px solid #aacdfa",
+                borderBottom: "none"
+              } 
+            }}>
+              <TableCell colSpan={5} sx={{ textAlign: "left", pl: 2 }}>Grand Total</TableCell>
+              {products.map(prod => {
+                const totalQty = daysData.reduce((sum, row) => sum + (Number(row.product_quantities[prod.id]) || 0), 0);
+                return <TableCell key={prod.id} align="center">{totalQty > 0 ? totalQty : "0"}</TableCell>;
+              })}
+              <TableCell align="center">
+                Rs. {daysData.reduce((sum, row) => sum + (Number(calcProductionPayRow(row, products)) || 0), 0).toLocaleString('en-US', {minimumFractionDigits: 2})}
+              </TableCell>
+              <TableCell align="center">
+                Rs. {daysData.reduce((sum, row) => sum + (Number(row.ot_hours) || 0), 0).toLocaleString('en-US', {minimumFractionDigits: 2})}
+              </TableCell>
+              <TableCell align="center">
+                Rs. {daysData.reduce((sum, row) => sum + (Number(row.day_duty) || 0), 0).toLocaleString('en-US', {minimumFractionDigits: 2})}
+              </TableCell>
+              <TableCell align="center">
+                Rs. {daysData.reduce((sum, row) => sum + (Number(row.travelling) || 0), 0).toLocaleString('en-US', {minimumFractionDigits: 2})}
+              </TableCell>
+              <TableCell align="center">
+                Rs. {daysData.reduce((sum, row) => sum + (Number(row.other_allowance) || 0), 0).toLocaleString('en-US', {minimumFractionDigits: 2})}
+              </TableCell>
+              <TableCell align="center">
+                Rs. {daysData.reduce((sum, row) => sum + (Number(calcGross(row, products) === "-" ? 0 : calcGross(row, products)) || 0), 0).toLocaleString('en-US', {minimumFractionDigits: 2})}
+              </TableCell>
+              <TableCell></TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
