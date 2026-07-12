@@ -365,6 +365,7 @@ const DrawerContent = ({
     if (user && user?.permissionObject) {
       return user.permissionObject;
     }
+    return {};
   }, [user]);
 
   return (
@@ -648,8 +649,8 @@ export const LinkButton = React.memo(
               color: disabled
                 ? "grey"
                 : isMatch
-                ? "var(--pallet-orange)"
-                : "#fff",
+                  ? "var(--pallet-orange)"
+                  : "#fff",
             }}
           >
             {icon}
@@ -661,8 +662,8 @@ export const LinkButton = React.memo(
               color: disabled
                 ? "grey"
                 : isMatch
-                ? "var(--pallet-orange)"
-                : "#fff",
+                  ? "var(--pallet-orange)"
+                  : "#fff",
             }}
           >
             {title}
