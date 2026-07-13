@@ -9,7 +9,8 @@ import {
   Button,
   Divider,
   Alert,
-  CircularProgress
+  CircularProgress,
+  IconButton
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router";
 import axios from "axios";
@@ -19,6 +20,7 @@ import { useTheme } from "@mui/material/styles";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/payroll`;
 
@@ -43,6 +45,9 @@ interface FormErrors {
   dob?: string;
   joinDate?: string;
   departmentId?: string;
+  emergencyName?: string;
+  emergencyPhone?: string;
+  emergencyRelationship?: string;
 }
 
 export default function EditEmployee() {
@@ -150,11 +155,13 @@ export default function EditEmployee() {
     else if (field === "gender" && !value) {
       errorText = "Gender is required.";
     }
-    else if (field === "dob" && !value) {
-      errorText = "Date of Birth is required.";
+    else if (field === "dob") {
+      if (!value) errorText = "Date of Birth is required.";
+      else if (new Date(value) > new Date()) errorText = "Date of Birth cannot be in the future.";
     }
-    else if (field === "joinDate" && !value) {
-      errorText = "Join Date is required.";
+    else if (field === "joinDate") {
+      if (!value) errorText = "Join Date is required.";
+      else if (new Date(value) > new Date()) errorText = "Join Date cannot be in the future.";
     }
     else if (field === "departmentId" && !value) {
       errorText = "Department selection is required.";
@@ -189,6 +196,25 @@ export default function EditEmployee() {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(value)) {
         errorText = "Invalid format. Example: user@domain.com";
+      } else if (/[A-Z]/.test(value)) {
+        errorText = "Email must not contain capital letters.";
+      }
+    }
+    else if (field === "emergencyName" && value.trim()) {
+      if (!/^[a-zA-Z\s]+$/.test(value)) {
+        errorText = "Name should only contain letters and spaces.";
+      }
+    }
+    else if (field === "emergencyPhone" && value.trim()) {
+      if (!/^\d+$/.test(value)) {
+        errorText = "Phone number must contain only digits.";
+      } else if (value.length !== 10) {
+        errorText = "Phone number must be exactly 10 digits.";
+      }
+    }
+    else if (field === "emergencyRelationship" && value.trim()) {
+      if (/\d/.test(value)) {
+        errorText = "Relationship cannot contain numbers.";
       }
     }
 
@@ -212,7 +238,11 @@ export default function EditEmployee() {
     if (!formData.fullName.trim()) newErrors.fullName = "Full Name is required.";
     if (!formData.gender) newErrors.gender = "Gender is required.";
     if (!formData.dob) newErrors.dob = "Date of Birth is required.";
+    else if (new Date(formData.dob) > new Date()) newErrors.dob = "Date of Birth cannot be in the future.";
+    
     if (!formData.joinDate) newErrors.joinDate = "Join Date is required.";
+    else if (new Date(formData.joinDate) > new Date()) newErrors.joinDate = "Join Date cannot be in the future.";
+    
     if (!formData.departmentId) newErrors.departmentId = "Department is required.";
     if (!formData.designation.trim()) newErrors.designation = "Designation is required.";
     if (!formData.address.trim()) newErrors.address = "Address is required.";
@@ -239,7 +269,25 @@ export default function EditEmployee() {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.email)) {
         newErrors.email = "Invalid format. Example: user@domain.com";
+      } else if (/[A-Z]/.test(formData.email)) {
+        newErrors.email = "Email must not contain capital letters.";
       }
+    }
+
+    if (formData.emergencyName.trim() && !/^[a-zA-Z\s]+$/.test(formData.emergencyName)) {
+      newErrors.emergencyName = "Name should only contain letters and spaces.";
+    }
+    
+    if (formData.emergencyPhone.trim()) {
+      if (!/^\d+$/.test(formData.emergencyPhone)) {
+        newErrors.emergencyPhone = "Phone number must contain only digits.";
+      } else if (formData.emergencyPhone.length !== 10) {
+        newErrors.emergencyPhone = "Phone number must be exactly 10 digits.";
+      }
+    }
+
+    if (formData.emergencyRelationship.trim() && /\d/.test(formData.emergencyRelationship)) {
+      newErrors.emergencyRelationship = "Relationship cannot contain numbers.";
     }
 
     setErrors(newErrors);
@@ -359,9 +407,14 @@ export default function EditEmployee() {
         gap: { xs: 0.5, sm: 0 },
         mb: 4
       }}>
-        <Typography variant="h5" sx={{ color: isDarkMode ? "#ffffff" : "#024271", fontWeight: 700 }}>
-          Edit Employee: <span style={{ color: isDarkMode ? "#94a3b8" : "#64748b", fontWeight: 500 }}>{formData.fullName}</span>
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <IconButton onClick={() => navigate(`/payroll/employees/${id}`)} sx={{ color: isDarkMode ? "#ffffff" : "#024271" }}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h5" sx={{ color: isDarkMode ? "#ffffff" : "#024271", fontWeight: 700 }}>
+            Edit Employee: <span style={{ color: isDarkMode ? "#94a3b8" : "#64748b", fontWeight: 500 }}>{formData.fullName}</span>
+          </Typography>
+        </Box>
       </Box>
 
       {errorMsg && <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>{errorMsg}</Alert>}
@@ -509,7 +562,8 @@ export default function EditEmployee() {
                     fullWidth 
                     size="small" 
                     type="date" 
-                    InputLabelProps={{ shrink: true }} 
+                    InputLabelProps={{ shrink: true }}
+                    inputProps={{ max: new Date().toISOString().split('T')[0] }}
                     value={formData.dob} 
                     onChange={(e) => handleChange("dob", e.target.value)} 
                     onBlur={(e) => handleBlur("dob", e.target.value)}
@@ -524,7 +578,8 @@ export default function EditEmployee() {
                     fullWidth 
                     size="small" 
                     type="date" 
-                    InputLabelProps={{ shrink: true }} 
+                    InputLabelProps={{ shrink: true }}
+                    inputProps={{ max: new Date().toISOString().split('T')[0] }}
                     value={formData.joinDate} 
                     onChange={(e) => handleChange("joinDate", e.target.value)} 
                     onBlur={(e) => handleBlur("joinDate", e.target.value)}
@@ -651,19 +706,28 @@ export default function EditEmployee() {
               </Typography>
               <Grid container spacing={2.5}>
                 <Grid item xs={12} sm={4}>
-                  <TextField label="Contact Name" fullWidth size="small" value={formData.emergencyName} onChange={(e) => handleChange("emergencyName", e.target.value)} />
+                  <TextField label="Contact Name" fullWidth size="small" value={formData.emergencyName} onChange={(e) => handleChange("emergencyName", e.target.value)} onBlur={(e) => handleBlur("emergencyName", e.target.value)} error={!!errors.emergencyName} helperText={errors.emergencyName} />
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                  <TextField label="Phone" fullWidth size="small" value={formData.emergencyPhone} onChange={(e) => handleChange("emergencyPhone", e.target.value)} />
+                  <TextField label="Phone" fullWidth size="small" value={formData.emergencyPhone} onChange={(e) => handleChange("emergencyPhone", e.target.value)} onBlur={(e) => handleBlur("emergencyPhone", e.target.value)} error={!!errors.emergencyPhone} helperText={errors.emergencyPhone} />
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                  <TextField label="Relationship" fullWidth size="small" value={formData.emergencyRelationship} onChange={(e) => handleChange("emergencyRelationship", e.target.value)} />
+                  <TextField 
+                    label="Relationship" 
+                    fullWidth 
+                    size="small" 
+                    value={formData.emergencyRelationship} 
+                    onChange={(e) => handleChange("emergencyRelationship", e.target.value)}
+                    onBlur={(e) => handleBlur("emergencyRelationship", e.target.value)}
+                    error={!!errors.emergencyRelationship}
+                    helperText={errors.emergencyRelationship}
+                  />
                 </Grid>
               </Grid>
             </Paper>
 
             {/* Actions Buttons */}
-            <Box sx={{ display: "flex", gap: 2, mt: 1, mb: 4, flexDirection: { xs: "column", sm: "row" } }}>
+            <Box sx={{ display: "flex", gap: 2, mt: 1, mb: 4, flexDirection: { xs: "column", sm: "row" }, justifyContent: { xs: "center", sm: "flex-end" } }}>
               <Button
                 type="submit"
                 variant="contained"
@@ -673,9 +737,10 @@ export default function EditEmployee() {
                   bgcolor: isDarkMode ? "#004494" : "#0056b3", 
                   "&:hover": { bgcolor: "#003566" },
                   textTransform: "none", 
-                  px: 4,
+                  px: { xs: 2, sm: 4 },
                   borderRadius: 1.5,
-                  fontWeight: 600
+                  fontWeight: 600,
+                  width: { xs: "100%", sm: "auto" }
                 }}
               >
                 {submitLoading ? "Updating..." : "Save Changes"}
@@ -693,9 +758,10 @@ export default function EditEmployee() {
                     bgcolor: isDarkMode ? "rgba(255,255,255,0.05)" : "#f8fafc"
                   },
                   textTransform: "none", 
-                  px: 4,
+                  px: { xs: 2, sm: 4 },
                   borderRadius: 1.5,
-                  fontWeight: 600
+                  fontWeight: 600,
+                  width: { xs: "100%", sm: "auto" }
                 }}
               >
                 Cancel

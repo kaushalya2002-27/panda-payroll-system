@@ -226,19 +226,19 @@ export default function ViewEmployee() {
               </Box>
               
               <Grid container spacing={2.5}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={5}>
                   <Typography variant="caption" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary", display: "block", mb: 0.5 }}>Full Name</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600, color: isDarkMode ? "#cbd5e1" : "#1c2434" }}>{emp.full_name || "–"}</Typography>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={4}>
                   <Typography variant="caption" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary", display: "block", mb: 0.5 }}>National ID (NIC)</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600, color: isDarkMode ? "#cbd5e1" : "#1c2434" }}>{emp.nic || "–"}</Typography>
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                   <Typography variant="caption" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary", display: "block", mb: 0.5 }}>Gender</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600, color: isDarkMode ? "#cbd5e1" : "#1c2434" }}>{emp.gender || "–"}</Typography>
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={5}>
                   <Typography variant="caption" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary", display: "block", mb: 0.5 }}>Date of Birth</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600, color: isDarkMode ? "#cbd5e1" : "#1c2434" }}>{emp.date_of_birth || "–"}</Typography>
                 </Grid>
@@ -246,18 +246,18 @@ export default function ViewEmployee() {
                   <Typography variant="caption" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary", display: "block", mb: 0.5 }}>Joined Date</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600, color: isDarkMode ? "#cbd5e1" : "#1c2434" }}>{emp.join_date || "–"}</Typography>
                 </Grid>
-
-                <Grid item xs={12}><Divider sx={{ my: 0.5, borderColor: isDarkMode ? "#2e3b63" : "divider" }} /></Grid>
-
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                   <Typography variant="caption" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary", display: "block", mb: 0.5 }}>Phone Number</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600, color: isDarkMode ? "#cbd5e1" : "#1c2434" }}>{emp.phone || "–"}</Typography>
                 </Grid>
-                <Grid item xs={12} sm={8}>
+
+                <Grid item xs={12}><Divider sx={{ my: 0.5, borderColor: isDarkMode ? "#2e3b63" : "divider" }} /></Grid>
+
+                <Grid item xs={12} sm={5}>
                   <Typography variant="caption" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary", display: "block", mb: 0.5 }}>Email Address</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600, color: isDarkMode ? "#cbd5e1" : "#1c2434" }}>{emp.email || "–"}</Typography>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={7}>
                   <Typography variant="caption" sx={{ color: isDarkMode ? "#94a3b8" : "text.secondary", display: "block", mb: 0.5 }}>Residential Address</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600, color: isDarkMode ? "#cbd5e1" : "#1c2434" }}>{emp.address || "–"}</Typography>
                 </Grid>

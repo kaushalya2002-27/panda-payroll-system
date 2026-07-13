@@ -52,10 +52,15 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
 
   const statusColor = selectedUser?.availability ? "#44b700" : "#f44336";
 
+  const [imageCacheBuster, setImageCacheBuster] = useState<number>(Date.now());
+
   const { mutate: profileUpdateMutation, isPending } = useMutation({
     mutationFn: updateUserProfileImage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["current-user"] });
+      setImageCacheBuster(Date.now());
+      setImageFile(null);
+      setImagePreview(null);
       enqueueSnackbar("Profile updated successfully!", { variant: "success" });
     },
     onError: (error: any) => {
@@ -88,8 +93,20 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
         boxShadow: "0 0 10px rgba(0,0,0,0.1)",
         my: 2,
         backgroundColor: isDarkMode ? "#1c2541" : undefined,
+        width: "100%",
+        boxSizing: "border-box",
+        position: "relative",
       }}
     >
+      {isTablet && (
+        <IconButton
+          aria-label="edit"
+          onClick={() => setOpenEditUserRoleDialog(true)}
+          sx={{ position: "absolute", top: 16, right: 16 }}
+        >
+          <EditOutlinedIcon sx={{ color: isDarkMode ? "#90caf9" : "var(--pallet-blue)" }} />
+        </IconButton>
+      )}
       <Box
         sx={{
           flex: 1,
@@ -97,7 +114,7 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
-          p: "3rem",
+          p: { xs: 2, sm: 3, md: 4 },
         }}
         gap={2}
       >
@@ -118,7 +135,15 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
         >
           <ProfileImage
             name={selectedUser?.name}
-            files={imageFile ? [imageFile] : selectedUser?.profileImage}
+            files={
+              imageFile
+                ? [imageFile]
+                : selectedUser?.profileImage?.map(img =>
+                  'imageUrl' in img
+                    ? { ...img, imageUrl: `${img.imageUrl}?t=${imageCacheBuster}` }
+                    : img
+                )
+            }
             fontSize="5rem"
           />
         </Badge>
@@ -135,7 +160,10 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
         <Box
           sx={{
             display: "flex",
-            flexDirection: isTablet ? "column" : "row",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            flexWrap: "wrap",
           }}
           gap={2}
         >
@@ -146,6 +174,7 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
               mt: 2,
               color: isDarkMode ? "#90caf9" : undefined,
               borderColor: isDarkMode ? "#90caf9" : undefined,
+              whiteSpace: "nowrap",
             }}
           >
             Change Profile Image
@@ -185,42 +214,35 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
           flexDirection: "column",
           backgroundColor: isDarkMode ? "#1c2541" : "#fff",
           flex: 2,
-          p: "3rem",
+          p: { xs: 2, sm: 3, md: 4 },
         }}
       >
-        <Stack
-          mb={4}
-          sx={{
-            display: "flex",
-            alignItems: "flex-end",
-          }}
-        >
-          <Box>
-            <>
-              {isTablet ? (
-                <IconButton
-                  aria-label="edit"
-                  onClick={() => setOpenEditUserRoleDialog(true)}
-                >
-                  <EditOutlinedIcon sx={{ color: isDarkMode ? "#90caf9" : "var(--pallet-blue)" }} />
-                </IconButton>
-              ) : (
-                <CustomButton
-                  variant="contained"
-                  sx={{
-                    backgroundColor: isDarkMode ? "#90caf9" : "var(--pallet-blue)",
-                    color: isDarkMode ? "#0b1329" : "#ffffff",
-                  }}
-                  size="medium"
-                  onClick={() => setOpenEditUserRoleDialog(true)}
-                  startIcon={<EditOutlinedIcon />}
-                >
-                  Edit My Profile
-                </CustomButton>
-              )}
-            </>
-          </Box>
-        </Stack>
+        {!isTablet && (
+          <Stack
+            mb={2}
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              width: "100%",
+            }}
+          >
+            <Box>
+              <CustomButton
+                variant="contained"
+                sx={{
+                  backgroundColor: isDarkMode ? "#90caf9" : "var(--pallet-blue)",
+                  color: isDarkMode ? "#0b1329" : "#ffffff",
+                }}
+                size="medium"
+                onClick={() => setOpenEditUserRoleDialog(true)}
+                startIcon={<EditOutlinedIcon />}
+              >
+                Edit My Profile
+              </CustomButton>
+            </Box>
+          </Stack>
+        )}
         <Stack direction={isTablet ? "column" : "row"}>
           <DrawerContentItem
             label="Employee Id"
@@ -332,7 +354,7 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
             setOpenEditUserPasswordResetDialog(false);
             setOpenEditUserRoleDialog(false);
           }}
-          onSubmit={(data) => {}}
+          onSubmit={(data) => { }}
           defaultValues={user}
         />
       )}

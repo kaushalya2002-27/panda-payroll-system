@@ -226,6 +226,7 @@ export function DrawerContentItem({
           sx={{
             color: isDarkMode ? "#ffffff !important" : "inherit",
             fontWeight: isDarkMode ? 600 : 400,
+            overflowWrap: "anywhere",
           }}
         >
           {value ?? "--"}

@@ -204,13 +204,13 @@ export default function AllEmployees() {
           </Grid>
 
           {/* Action Buttons */}
-          <Grid item xs={12} md={3.5} sx={{ display: "flex", gap: 1, mt: { xs: 1, md: 2.5 }, flexWrap: "wrap" }}>
+          <Grid item xs={12} md={3.5} sx={{ display: "flex", gap: 1, mt: { xs: 1, md: 2.5 } }}>
             <Button
               variant="contained"
               size="medium"
               startIcon={<FilterAltIcon />}
               onClick={handleFilter}
-              sx={{ bgcolor: "#1a73e8", "&:hover": { bgcolor: "#1557b0" }, textTransform: "none", borderRadius: 1.5, flexGrow: 1 }}
+              sx={{ bgcolor: "#1a73e8", "&:hover": { bgcolor: "#1557b0" }, textTransform: "none", borderRadius: 1.5, flex: 1 }}
             >
               Filter
             </Button>
@@ -224,7 +224,8 @@ export default function AllEmployees() {
                 borderColor: isDarkMode ? "#90caf9" : "#1a73e8", 
                 "&:hover": { borderColor: isDarkMode ? "#64b5f6" : "#1557b0", bgcolor: isDarkMode ? "rgba(144, 202, 249, 0.08)" : "#f1f7fe" }, 
                 textTransform: "none", 
-                borderRadius: 1.5 
+                borderRadius: 1.5,
+                flex: 1
               }}
             >
               Clear
@@ -236,7 +237,7 @@ export default function AllEmployees() {
                   size="medium"
                   startIcon={<AddIcon />}
                   onClick={() => navigate("/payroll/add-employee")}
-                  sx={{ bgcolor: isDarkMode ? "#004494" : "#0056b3", "&:hover": { bgcolor: "#003566" }, textTransform: "none", borderRadius: 1.5 }}
+                  sx={{ bgcolor: isDarkMode ? "#004494" : "#0056b3", "&:hover": { bgcolor: "#003566" }, textTransform: "none", borderRadius: 1.5, flex: 1 }}
                 >
                   Add
                 </Button>
@@ -260,7 +261,7 @@ export default function AllEmployees() {
         border: isDarkMode ? "1px solid #2e3b63" : "none",
         overflowX: "auto",
       }}>
-        <Table size="medium">
+        <Table size="medium" sx={{ minWidth: 900 }}>
           <TableHead sx={{ bgcolor: isDarkMode ? "#2e3b63" : "#a0c4ff" }}>
             <TableRow>
               <TableCell sx={{ fontWeight: 700, fontSize: "0.75rem", color: isDarkMode ? "#ffffff" : "#003566", letterSpacing: "0.5px" }}>EMPLOYEE</TableCell>

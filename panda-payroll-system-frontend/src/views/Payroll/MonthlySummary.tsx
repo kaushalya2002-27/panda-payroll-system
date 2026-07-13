@@ -42,6 +42,12 @@ const MONTH_NAMES = [
   "July", "August", "September", "October", "November", "December"
 ];
 
+const getBasePath = () => {
+  let base = import.meta.env.VITE_BASE_PATH || '';
+  if (base.endsWith('/')) base = base.slice(0, -1);
+  return base;
+};
+
 export default function MonthlySummary() {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -89,12 +95,12 @@ export default function MonthlySummary() {
 
   const handleGoToPaySlip = (employeeId: number) => {
     if (!employeeId) return;
-    window.open(`/payroll/slips?employee_id=${employeeId}&year=${year}&month=${month}`, '_blank');
+    window.open(`${getBasePath()}/payroll/slips?employee_id=${employeeId}&year=${year}&month=${month}`, '_blank');
   };
 
   const handleGoToDetailSheet = (employeeId: number) => {
     if (!employeeId) return;
-    window.open(`/payroll/detail-sheets?employee_id=${employeeId}&year=${year}&month=${month}`, '_blank');
+    window.open(`${getBasePath()}/payroll/detail-sheets?employee_id=${employeeId}&year=${year}&month=${month}`, '_blank');
   };
 
   const handleEditTimecard = (employeeId: number) => {

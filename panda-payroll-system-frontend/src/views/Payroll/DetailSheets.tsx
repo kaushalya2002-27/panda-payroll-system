@@ -120,7 +120,9 @@ export default function DetailSheets() {
             setMonth(activeMonth); 
           }
 
-          fetchReportData(activeEmpId, activeYear, activeMonth);
+          if (urlEmpId) {
+            fetchReportData(activeEmpId, activeYear, activeMonth);
+          }
         }
       })
       .catch(err => console.error("Error loading employees:", err)); 

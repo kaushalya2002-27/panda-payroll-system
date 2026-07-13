@@ -59,6 +59,12 @@ const mapRow = (row: any): TimecardRow => ({
   product_quantities: row.product_quantities || {},
 });
 
+const getBasePath = () => {
+  let base = import.meta.env.VITE_BASE_PATH || '';
+  if (base.endsWith('/')) base = base.slice(0, -1);
+  return base;
+};
+
 export default function TimeCards() {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
@@ -402,7 +408,7 @@ export default function TimeCards() {
                 variant="outlined"
                 startIcon={<ReceiptLongIcon />}
                 disabled={!selectedEmployee}
-                onClick={() => window.open(`/payroll/detail-sheets?employee_id=${selectedEmployee}&year=${year}&month=${month}`, "_blank")}
+                onClick={() => window.open(`${getBasePath()}/payroll/detail-sheets?employee_id=${selectedEmployee}&year=${year}&month=${month}`, "_blank")}
                 sx={{ textTransform: "none", color: isDarkMode ? "#cbd5e1" : "#2c3e50", borderColor: isDarkMode ? "#475569" : "#cbd5e1" }}
               >
                 Detail Sheet
@@ -414,7 +420,7 @@ export default function TimeCards() {
                 variant="outlined"
                 startIcon={<PaymentsIcon />}
                 disabled={!selectedEmployee}
-                onClick={() => window.open(`/payroll/slips?employee_id=${selectedEmployee}&year=${year}&month=${month}`, "_blank")}
+                onClick={() => window.open(`${getBasePath()}/payroll/slips?employee_id=${selectedEmployee}&year=${year}&month=${month}`, "_blank")}
                 sx={{ textTransform: "none", color: isDarkMode ? "#cbd5e1" : "#2c3e50", borderColor: isDarkMode ? "#475569" : "#cbd5e1" }}
               >
                 Pay Slip

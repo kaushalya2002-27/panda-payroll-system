@@ -174,10 +174,16 @@ export default function UpdateUserProfile({
                   label="Mobile Number"
                   required
                   error={!!errors.mobile}
-                  helperText={errors.mobile ? "Required *" : ""}
+                  helperText={errors.mobile ? (errors.mobile.message || "Required *") : ""}
                   size="small"
                   sx={fieldSx}
-                  {...register("mobile", { required: true })}
+                  {...register("mobile", { 
+                    required: "Required *",
+                    pattern: {
+                      value: /^\d{10}$/,
+                      message: "Must be exactly 10 digits"
+                    }
+                  })}
                 />
               </Box>
 
@@ -211,13 +217,16 @@ export default function UpdateUserProfile({
         </Stack>
       </DialogContent>
       <Divider sx={{ backgroundColor: isDarkMode ? "#2e3b63" : undefined }} />
-      <DialogActions sx={{ padding: "1rem" }}>
+      <DialogActions sx={{ padding: "1rem", display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: { xs: 1, sm: 0 } }}>
         <Button
           onClick={() => {
             resetForm();
             handleClose();
           }}
-          sx={{ color: isDarkMode ? "#90caf9" : "var(--pallet-blue)" }}
+          sx={{ 
+            color: isDarkMode ? "#90caf9" : "var(--pallet-blue)",
+            width: { xs: "100%", sm: "auto" }
+          }}
         >
           Cancel
         </Button>
@@ -226,6 +235,7 @@ export default function UpdateUserProfile({
           sx={{
             backgroundColor: isDarkMode ? "#90caf9" : "var(--pallet-blue)",
             color: isDarkMode ? "#0b1329" : "#ffffff",
+            width: { xs: "100%", sm: "auto" }
           }}
           disabled={isPending}
           size="medium"
