@@ -489,7 +489,7 @@ const DrawerContent = ({
           deleteFunc={async () => {
             localStorage.removeItem("token");
             queryClient.clear();
-            window.location.href = "/";
+            window.location.href = import.meta.env.VITE_BASE_PATH || "/";
           }}
           onSuccess={() => {
             setLogoutDialogOpen(false);

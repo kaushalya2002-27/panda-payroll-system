@@ -378,7 +378,7 @@ export default function TimeCards() {
 
       <Paper sx={{ p: 2.5, mb: 3, borderRadius: 2, boxShadow: 1, backgroundColor: isDarkMode ? "#1c2541" : "background.paper" }}>
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField select fullWidth size="small" label="Employee" value={selectedEmployee} sx={filterInputStyles}
               onChange={(e) => handleEmployeeChange(e.target.value ? Number(e.target.value) : "")}>
               {employees.map(emp => (
@@ -386,17 +386,17 @@ export default function TimeCards() {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={3} md={2}>
             <TextField select fullWidth size="small" label="Year" value={year} onChange={(e) => setYear(e.target.value)} sx={filterInputStyles}>
               {YEARS.map(yr => <MenuItem key={yr} value={yr}>{yr}</MenuItem>)}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={3} md={2}>
             <TextField select fullWidth size="small" label="Month" value={month} onChange={(e) => setMonth(Number(e.target.value))} sx={filterInputStyles}>
               {MONTHS.map(m => <MenuItem key={m.value} value={m.value}>{m.label}</MenuItem>)}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={4} sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+          <Grid item xs={12} sm={12} md={5} sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
             <Button variant="contained" startIcon={<PlayArrowIcon />} onClick={handleLoadButton}
               disabled={loading || !selectedEmployee}
               sx={{ bgcolor: "#1976d2", "&:hover": { bgcolor: "#1565c0" }, textTransform: "none" }}>

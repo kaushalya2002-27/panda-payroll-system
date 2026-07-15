@@ -25,3 +25,11 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/setup-server', function () {
+    \Illuminate\Support\Facades\Artisan::call('storage:link');
+    \Illuminate\Support\Facades\Artisan::call('route:clear');
+    \Illuminate\Support\Facades\Artisan::call('cache:clear');
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    return 'Server setup complete! Cache cleared and storage linked successfully.';
+});
