@@ -95,11 +95,11 @@ export default function EditEmployee() {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        // 1. Departments ලබා ගැනීම
+        // 1. Departments 
         const deptResponse = await axios.get(`${API_BASE_URL}/departments`);
         setDepartments(deptResponse.data);
 
-        // 2. Job Positions ලබා ගැනීම
+        // 2. Job Positions 
         try {
           const posResponse = await axios.get(`${API_BASE_URL}/job-positions`);
           setJobPositions(posResponse.data);
@@ -107,7 +107,6 @@ export default function EditEmployee() {
           console.error("Error loading job positions:", posErr);
         }
 
-        // 3. දැනට ඉන්න Employee ගේ ඩේටා ලබා ගැනීම
         const empResponse = await axios.get(`${API_BASE_URL}/employees/${id}`);
         const emp = empResponse.data;
 
@@ -324,7 +323,6 @@ export default function EditEmployee() {
     setSubmitLoading(true);
 
     const dataToSend = new FormData();
-    // 💡 Laravel PUT/PATCH bug එක මගහැරීමට Method Spoofing භාවිතා කර ඇත
     dataToSend.append("_method", "PUT"); 
 
     dataToSend.append("full_name", formData.fullName);
@@ -350,7 +348,6 @@ export default function EditEmployee() {
     }
 
     try {
-      // 💡 Request එක POST එකක් ලෙස යවන්නේ method spoofing නිසාය
       const response = await axios.post(`${API_BASE_URL}/employees/${id}`, dataToSend, {
         headers: { "Content-Type": "multipart/form-data" }
       });

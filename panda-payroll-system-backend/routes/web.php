@@ -27,6 +27,15 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::get('/setup-server', function () {
+    // Remove the old symlink or folder if it exists (prevents "symlink already exists" error)
+    if (file_exists(public_path('storage'))) {
+        if (is_link(public_path('storage'))) {
+            unlink(public_path('storage'));
+        } else {
+            \Illuminate\Support\Facades\File::deleteDirectory(public_path('storage'));
+        }
+    }
+
     \Illuminate\Support\Facades\Artisan::call('storage:link');
     \Illuminate\Support\Facades\Artisan::call('route:clear');
     \Illuminate\Support\Facades\Artisan::call('cache:clear');
